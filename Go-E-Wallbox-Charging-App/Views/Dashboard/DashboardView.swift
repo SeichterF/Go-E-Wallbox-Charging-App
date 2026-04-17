@@ -27,6 +27,9 @@ struct DashboardView: View {
             }
             .padding()
             .navigationTitle(AppConstants.UI.dashboardTitle)
+            .task {
+                await viewModel.refreshStatus()
+            }
         }
     }
 }

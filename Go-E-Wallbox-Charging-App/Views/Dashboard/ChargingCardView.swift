@@ -5,6 +5,7 @@ struct ChargingCardView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
+            Text(String(format: AppConstants.UI.wallboxStatusFormat, status.connectionStateLabel))
             Text(String(format: AppConstants.UI.chargingPowerFormat, status.chargingPowerW))
             Text(String(format: AppConstants.UI.energyTodayFormat, status.energyPerDayWh))
         }

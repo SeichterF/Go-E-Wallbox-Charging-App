@@ -6,6 +6,13 @@ See CONTEXT.md for API reference and business logic. See ARCHITECTURE.md for pro
 
 ---
 
+## Workspace / Working Directory
+
+- Always work in the local repository at `/Users/florianseichter/Projects/Go-E-Wallbox-Charging-App`
+- Do not use Cursor worktrees unless explicitly requested by the user
+
+---
+
 ## Code Style
 
 - Swift 5.9+, SwiftUI, async/await – no Combine, no callbacks
@@ -60,6 +67,7 @@ See CONTEXT.md for API reference and business logic. See ARCHITECTURE.md for pro
 ## API Conventions
 
 - All API calls go to `http://<ip>/api/` – base URL comes from AppSettings
+- Preferred default wallbox IP: `192.168.178.69`
 - Use `dwo` in Wh (multiply kWh × 1000) – never send kWh directly
 - Always refresh status after a SET call to confirm the change was applied
 - Polling interval: 15–20 seconds

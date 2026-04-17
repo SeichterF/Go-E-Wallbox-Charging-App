@@ -1,13 +1,13 @@
 //
-//  Walbox_LimitUITests.swift
-//  Walbox LimitUITests
+//  Go_E_Wallbox_Charging_AppUITests.swift
+//  Go-E-Wallbox-Charging-AppUITests
 //
-//  Created by Florian Seichter on 18.02.26.
+//  Created by Florian Seichter on 17.04.26.
 //
 
 import XCTest
 
-final class Walbox_LimitUITests: XCTestCase {
+final class Go_E_Wallbox_Charging_AppUITests: XCTestCase {
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
@@ -29,6 +29,8 @@ final class Walbox_LimitUITests: XCTestCase {
         app.launch()
 
         // Use XCTAssert and related functions to verify your tests produce the correct results.
+        // XCUIAutomation Documentation
+        // https://developer.apple.com/documentation/xcuiautomation
     }
 
     @MainActor

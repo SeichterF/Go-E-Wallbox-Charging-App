@@ -1,13 +1,13 @@
 //
-//  Walbox_LimitUITestsLaunchTests.swift
-//  Walbox LimitUITests
+//  Go_E_Wallbox_Charging_AppUITestsLaunchTests.swift
+//  Go-E-Wallbox-Charging-AppUITests
 //
-//  Created by Florian Seichter on 18.02.26.
+//  Created by Florian Seichter on 17.04.26.
 //
 
 import XCTest
 
-final class Walbox_LimitUITestsLaunchTests: XCTestCase {
+final class Go_E_Wallbox_Charging_AppUITestsLaunchTests: XCTestCase {
 
     override class var runsForEachTargetApplicationUIConfiguration: Bool {
         true
@@ -24,6 +24,8 @@ final class Walbox_LimitUITestsLaunchTests: XCTestCase {
 
         // Insert steps here to perform after app launch but before taking a screenshot,
         // such as logging into a test account or navigating somewhere in the app
+        // XCUIAutomation Documentation
+        // https://developer.apple.com/documentation/xcuiautomation
 
         let attachment = XCTAttachment(screenshot: app.screenshot())
         attachment.name = "Launch Screen"

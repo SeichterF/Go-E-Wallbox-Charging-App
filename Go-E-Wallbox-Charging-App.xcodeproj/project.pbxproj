@@ -7,62 +7,62 @@
 	objects = {
 
 /* Begin PBXContainerItemProxy section */
-		74DB12372F46563500F961AB /* PBXContainerItemProxy */ = {
+		742C4F2A2F92175C00BC128F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 74DB12212F46563300F961AB /* Project object */;
+			containerPortal = 742C4F142F92175800BC128F /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 74DB12282F46563300F961AB;
-			remoteInfo = "Walbox Limit";
+			remoteGlobalIDString = 742C4F1B2F92175800BC128F;
+			remoteInfo = "Go-E-Wallbox-Charging-App";
 		};
-		74DB12412F46563500F961AB /* PBXContainerItemProxy */ = {
+		742C4F342F92175C00BC128F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 74DB12212F46563300F961AB /* Project object */;
+			containerPortal = 742C4F142F92175800BC128F /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 74DB12282F46563300F961AB;
-			remoteInfo = "Walbox Limit";
+			remoteGlobalIDString = 742C4F1B2F92175800BC128F;
+			remoteInfo = "Go-E-Wallbox-Charging-App";
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		74DB12292F46563300F961AB /* Walbox Limit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Walbox Limit.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		74DB12362F46563500F961AB /* Walbox LimitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Walbox LimitTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		74DB12402F46563500F961AB /* Walbox LimitUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Walbox LimitUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		742C4F1C2F92175800BC128F /* Go-E-Wallbox-Charging-App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Go-E-Wallbox-Charging-App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		742C4F292F92175C00BC128F /* Go-E-Wallbox-Charging-AppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Go-E-Wallbox-Charging-AppTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		742C4F332F92175C00BC128F /* Go-E-Wallbox-Charging-AppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Go-E-Wallbox-Charging-AppUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		74DB122B2F46563300F961AB /* Walbox Limit */ = {
+		742C4F1E2F92175800BC128F /* Go-E-Wallbox-Charging-App */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "Walbox Limit";
+			path = "Go-E-Wallbox-Charging-App";
 			sourceTree = "<group>";
 		};
-		74DB12392F46563500F961AB /* Walbox LimitTests */ = {
+		742C4F2C2F92175C00BC128F /* Go-E-Wallbox-Charging-AppTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "Walbox LimitTests";
+			path = "Go-E-Wallbox-Charging-AppTests";
 			sourceTree = "<group>";
 		};
-		74DB12432F46563500F961AB /* Walbox LimitUITests */ = {
+		742C4F362F92175C00BC128F /* Go-E-Wallbox-Charging-AppUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "Walbox LimitUITests";
+			path = "Go-E-Wallbox-Charging-AppUITests";
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		74DB12262F46563300F961AB /* Frameworks */ = {
+		742C4F192F92175800BC128F /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		74DB12332F46563500F961AB /* Frameworks */ = {
+		742C4F262F92175C00BC128F /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		74DB123D2F46563500F961AB /* Frameworks */ = {
+		742C4F302F92175C00BC128F /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -72,22 +72,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		74DB12202F46563300F961AB = {
+		742C4F132F92175800BC128F = {
 			isa = PBXGroup;
 			children = (
-				74DB122B2F46563300F961AB /* Walbox Limit */,
-				74DB12392F46563500F961AB /* Walbox LimitTests */,
-				74DB12432F46563500F961AB /* Walbox LimitUITests */,
-				74DB122A2F46563300F961AB /* Products */,
+				742C4F1E2F92175800BC128F /* Go-E-Wallbox-Charging-App */,
+				742C4F2C2F92175C00BC128F /* Go-E-Wallbox-Charging-AppTests */,
+				742C4F362F92175C00BC128F /* Go-E-Wallbox-Charging-AppUITests */,
+				742C4F1D2F92175800BC128F /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		74DB122A2F46563300F961AB /* Products */ = {
+		742C4F1D2F92175800BC128F /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				74DB12292F46563300F961AB /* Walbox Limit.app */,
-				74DB12362F46563500F961AB /* Walbox LimitTests.xctest */,
-				74DB12402F46563500F961AB /* Walbox LimitUITests.xctest */,
+				742C4F1C2F92175800BC128F /* Go-E-Wallbox-Charging-App.app */,
+				742C4F292F92175C00BC128F /* Go-E-Wallbox-Charging-AppTests.xctest */,
+				742C4F332F92175C00BC128F /* Go-E-Wallbox-Charging-AppUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -95,134 +95,134 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		74DB12282F46563300F961AB /* Walbox Limit */ = {
+		742C4F1B2F92175800BC128F /* Go-E-Wallbox-Charging-App */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 74DB124A2F46563500F961AB /* Build configuration list for PBXNativeTarget "Walbox Limit" */;
+			buildConfigurationList = 742C4F3D2F92175C00BC128F /* Build configuration list for PBXNativeTarget "Go-E-Wallbox-Charging-App" */;
 			buildPhases = (
-				74DB12252F46563300F961AB /* Sources */,
-				74DB12262F46563300F961AB /* Frameworks */,
-				74DB12272F46563300F961AB /* Resources */,
+				742C4F182F92175800BC128F /* Sources */,
+				742C4F192F92175800BC128F /* Frameworks */,
+				742C4F1A2F92175800BC128F /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				74DB122B2F46563300F961AB /* Walbox Limit */,
+				742C4F1E2F92175800BC128F /* Go-E-Wallbox-Charging-App */,
 			);
-			name = "Walbox Limit";
+			name = "Go-E-Wallbox-Charging-App";
 			packageProductDependencies = (
 			);
-			productName = "Walbox Limit";
-			productReference = 74DB12292F46563300F961AB /* Walbox Limit.app */;
+			productName = "Go-E-Wallbox-Charging-App";
+			productReference = 742C4F1C2F92175800BC128F /* Go-E-Wallbox-Charging-App.app */;
 			productType = "com.apple.product-type.application";
 		};
-		74DB12352F46563500F961AB /* Walbox LimitTests */ = {
+		742C4F282F92175C00BC128F /* Go-E-Wallbox-Charging-AppTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 74DB124D2F46563500F961AB /* Build configuration list for PBXNativeTarget "Walbox LimitTests" */;
+			buildConfigurationList = 742C4F402F92175C00BC128F /* Build configuration list for PBXNativeTarget "Go-E-Wallbox-Charging-AppTests" */;
 			buildPhases = (
-				74DB12322F46563500F961AB /* Sources */,
-				74DB12332F46563500F961AB /* Frameworks */,
-				74DB12342F46563500F961AB /* Resources */,
+				742C4F252F92175C00BC128F /* Sources */,
+				742C4F262F92175C00BC128F /* Frameworks */,
+				742C4F272F92175C00BC128F /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				74DB12382F46563500F961AB /* PBXTargetDependency */,
+				742C4F2B2F92175C00BC128F /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				74DB12392F46563500F961AB /* Walbox LimitTests */,
+				742C4F2C2F92175C00BC128F /* Go-E-Wallbox-Charging-AppTests */,
 			);
-			name = "Walbox LimitTests";
+			name = "Go-E-Wallbox-Charging-AppTests";
 			packageProductDependencies = (
 			);
-			productName = "Walbox LimitTests";
-			productReference = 74DB12362F46563500F961AB /* Walbox LimitTests.xctest */;
+			productName = "Go-E-Wallbox-Charging-AppTests";
+			productReference = 742C4F292F92175C00BC128F /* Go-E-Wallbox-Charging-AppTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		74DB123F2F46563500F961AB /* Walbox LimitUITests */ = {
+		742C4F322F92175C00BC128F /* Go-E-Wallbox-Charging-AppUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 74DB12502F46563500F961AB /* Build configuration list for PBXNativeTarget "Walbox LimitUITests" */;
+			buildConfigurationList = 742C4F432F92175C00BC128F /* Build configuration list for PBXNativeTarget "Go-E-Wallbox-Charging-AppUITests" */;
 			buildPhases = (
-				74DB123C2F46563500F961AB /* Sources */,
-				74DB123D2F46563500F961AB /* Frameworks */,
-				74DB123E2F46563500F961AB /* Resources */,
+				742C4F2F2F92175C00BC128F /* Sources */,
+				742C4F302F92175C00BC128F /* Frameworks */,
+				742C4F312F92175C00BC128F /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				74DB12422F46563500F961AB /* PBXTargetDependency */,
+				742C4F352F92175C00BC128F /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				74DB12432F46563500F961AB /* Walbox LimitUITests */,
+				742C4F362F92175C00BC128F /* Go-E-Wallbox-Charging-AppUITests */,
 			);
-			name = "Walbox LimitUITests";
+			name = "Go-E-Wallbox-Charging-AppUITests";
 			packageProductDependencies = (
 			);
-			productName = "Walbox LimitUITests";
-			productReference = 74DB12402F46563500F961AB /* Walbox LimitUITests.xctest */;
+			productName = "Go-E-Wallbox-Charging-AppUITests";
+			productReference = 742C4F332F92175C00BC128F /* Go-E-Wallbox-Charging-AppUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		74DB12212F46563300F961AB /* Project object */ = {
+		742C4F142F92175800BC128F /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 2620;
-				LastUpgradeCheck = 2620;
+				LastSwiftUpdateCheck = 2640;
+				LastUpgradeCheck = 2640;
 				TargetAttributes = {
-					74DB12282F46563300F961AB = {
-						CreatedOnToolsVersion = 26.2;
+					742C4F1B2F92175800BC128F = {
+						CreatedOnToolsVersion = 26.4;
 					};
-					74DB12352F46563500F961AB = {
-						CreatedOnToolsVersion = 26.2;
-						TestTargetID = 74DB12282F46563300F961AB;
+					742C4F282F92175C00BC128F = {
+						CreatedOnToolsVersion = 26.4;
+						TestTargetID = 742C4F1B2F92175800BC128F;
 					};
-					74DB123F2F46563500F961AB = {
-						CreatedOnToolsVersion = 26.2;
-						TestTargetID = 74DB12282F46563300F961AB;
+					742C4F322F92175C00BC128F = {
+						CreatedOnToolsVersion = 26.4;
+						TestTargetID = 742C4F1B2F92175800BC128F;
 					};
 				};
 			};
-			buildConfigurationList = 74DB12242F46563300F961AB /* Build configuration list for PBXProject "Walbox Limit" */;
+			buildConfigurationList = 742C4F172F92175800BC128F /* Build configuration list for PBXProject "Go-E-Wallbox-Charging-App" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 				Base,
 			);
-			mainGroup = 74DB12202F46563300F961AB;
+			mainGroup = 742C4F132F92175800BC128F;
 			minimizedProjectReferenceProxies = 1;
 			preferredProjectObjectVersion = 77;
-			productRefGroup = 74DB122A2F46563300F961AB /* Products */;
+			productRefGroup = 742C4F1D2F92175800BC128F /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				74DB12282F46563300F961AB /* Walbox Limit */,
-				74DB12352F46563500F961AB /* Walbox LimitTests */,
-				74DB123F2F46563500F961AB /* Walbox LimitUITests */,
+				742C4F1B2F92175800BC128F /* Go-E-Wallbox-Charging-App */,
+				742C4F282F92175C00BC128F /* Go-E-Wallbox-Charging-AppTests */,
+				742C4F322F92175C00BC128F /* Go-E-Wallbox-Charging-AppUITests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		74DB12272F46563300F961AB /* Resources */ = {
+		742C4F1A2F92175800BC128F /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		74DB12342F46563500F961AB /* Resources */ = {
+		742C4F272F92175C00BC128F /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		74DB123E2F46563500F961AB /* Resources */ = {
+		742C4F312F92175C00BC128F /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -232,21 +232,21 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		74DB12252F46563300F961AB /* Sources */ = {
+		742C4F182F92175800BC128F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		74DB12322F46563500F961AB /* Sources */ = {
+		742C4F252F92175C00BC128F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		74DB123C2F46563500F961AB /* Sources */ = {
+		742C4F2F2F92175C00BC128F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -256,20 +256,20 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		74DB12382F46563500F961AB /* PBXTargetDependency */ = {
+		742C4F2B2F92175C00BC128F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 74DB12282F46563300F961AB /* Walbox Limit */;
-			targetProxy = 74DB12372F46563500F961AB /* PBXContainerItemProxy */;
+			target = 742C4F1B2F92175800BC128F /* Go-E-Wallbox-Charging-App */;
+			targetProxy = 742C4F2A2F92175C00BC128F /* PBXContainerItemProxy */;
 		};
-		74DB12422F46563500F961AB /* PBXTargetDependency */ = {
+		742C4F352F92175C00BC128F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 74DB12282F46563300F961AB /* Walbox Limit */;
-			targetProxy = 74DB12412F46563500F961AB /* PBXContainerItemProxy */;
+			target = 742C4F1B2F92175800BC128F /* Go-E-Wallbox-Charging-App */;
+			targetProxy = 742C4F342F92175C00BC128F /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		74DB12482F46563500F961AB /* Debug */ = {
+		742C4F3B2F92175C00BC128F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -304,6 +304,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = N437CUVJGM;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -321,7 +322,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.4;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -332,7 +333,7 @@
 			};
 			name = Debug;
 		};
-		74DB12492F46563500F961AB /* Release */ = {
+		742C4F3C2F92175C00BC128F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -367,6 +368,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = N437CUVJGM;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -378,7 +380,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.4;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -388,13 +390,14 @@
 			};
 			name = Release;
 		};
-		74DB124B2F46563500F961AB /* Debug */ = {
+		742C4F3E2F92175C00BC128F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = N437CUVJGM;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -407,7 +410,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "Florian-Seichter.Walbox-Limit";
+				PRODUCT_BUNDLE_IDENTIFIER = "Florian-Seichter.Go-E-Wallbox-Charging-App";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -419,13 +422,14 @@
 			};
 			name = Debug;
 		};
-		74DB124C2F46563500F961AB /* Release */ = {
+		742C4F3F2F92175C00BC128F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = N437CUVJGM;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -438,7 +442,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "Florian-Seichter.Walbox-Limit";
+				PRODUCT_BUNDLE_IDENTIFIER = "Florian-Seichter.Go-E-Wallbox-Charging-App";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -450,16 +454,17 @@
 			};
 			name = Release;
 		};
-		74DB124E2F46563500F961AB /* Debug */ = {
+		742C4F412F92175C00BC128F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = N437CUVJGM;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.4;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "Florian-Seichter.Walbox-LimitTests";
+				PRODUCT_BUNDLE_IDENTIFIER = "Florian-Seichter.Go-E-Wallbox-Charging-AppTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -467,20 +472,21 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Walbox Limit.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Walbox Limit";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Go-E-Wallbox-Charging-App.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Go-E-Wallbox-Charging-App";
 			};
 			name = Debug;
 		};
-		74DB124F2F46563500F961AB /* Release */ = {
+		742C4F422F92175C00BC128F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = N437CUVJGM;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.4;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "Florian-Seichter.Walbox-LimitTests";
+				PRODUCT_BUNDLE_IDENTIFIER = "Florian-Seichter.Go-E-Wallbox-Charging-AppTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -488,18 +494,19 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Walbox Limit.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Walbox Limit";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Go-E-Wallbox-Charging-App.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Go-E-Wallbox-Charging-App";
 			};
 			name = Release;
 		};
-		74DB12512F46563500F961AB /* Debug */ = {
+		742C4F442F92175C00BC128F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = N437CUVJGM;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "Florian-Seichter.Walbox-LimitUITests";
+				PRODUCT_BUNDLE_IDENTIFIER = "Florian-Seichter.Go-E-Wallbox-Charging-AppUITests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -507,18 +514,19 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = "Walbox Limit";
+				TEST_TARGET_NAME = "Go-E-Wallbox-Charging-App";
 			};
 			name = Debug;
 		};
-		74DB12522F46563500F961AB /* Release */ = {
+		742C4F452F92175C00BC128F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = N437CUVJGM;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "Florian-Seichter.Walbox-LimitUITests";
+				PRODUCT_BUNDLE_IDENTIFIER = "Florian-Seichter.Go-E-Wallbox-Charging-AppUITests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -526,50 +534,50 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = "Walbox Limit";
+				TEST_TARGET_NAME = "Go-E-Wallbox-Charging-App";
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		74DB12242F46563300F961AB /* Build configuration list for PBXProject "Walbox Limit" */ = {
+		742C4F172F92175800BC128F /* Build configuration list for PBXProject "Go-E-Wallbox-Charging-App" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				74DB12482F46563500F961AB /* Debug */,
-				74DB12492F46563500F961AB /* Release */,
+				742C4F3B2F92175C00BC128F /* Debug */,
+				742C4F3C2F92175C00BC128F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		74DB124A2F46563500F961AB /* Build configuration list for PBXNativeTarget "Walbox Limit" */ = {
+		742C4F3D2F92175C00BC128F /* Build configuration list for PBXNativeTarget "Go-E-Wallbox-Charging-App" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				74DB124B2F46563500F961AB /* Debug */,
-				74DB124C2F46563500F961AB /* Release */,
+				742C4F3E2F92175C00BC128F /* Debug */,
+				742C4F3F2F92175C00BC128F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		74DB124D2F46563500F961AB /* Build configuration list for PBXNativeTarget "Walbox LimitTests" */ = {
+		742C4F402F92175C00BC128F /* Build configuration list for PBXNativeTarget "Go-E-Wallbox-Charging-AppTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				74DB124E2F46563500F961AB /* Debug */,
-				74DB124F2F46563500F961AB /* Release */,
+				742C4F412F92175C00BC128F /* Debug */,
+				742C4F422F92175C00BC128F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		74DB12502F46563500F961AB /* Build configuration list for PBXNativeTarget "Walbox LimitUITests" */ = {
+		742C4F432F92175C00BC128F /* Build configuration list for PBXNativeTarget "Go-E-Wallbox-Charging-AppUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				74DB12512F46563500F961AB /* Debug */,
-				74DB12522F46563500F961AB /* Release */,
+				742C4F442F92175C00BC128F /* Debug */,
+				742C4F452F92175C00BC128F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = 74DB12212F46563300F961AB /* Project object */;
+	rootObject = 742C4F142F92175800BC128F /* Project object */;
 }

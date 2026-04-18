@@ -22,5 +22,11 @@ enum AppConstants {
         static let statusComplete = "Charge Complete"
         static let statusUnknown = "Unknown"
         static let loading = "Loading..."
+        static let currentSOCFormat = "Current SOC: %d%%"
+        static let calculatedChargeLimitFormat = "Calculated limit: %.1f kWh (%d Wh)"
+        static let calculatedChargeLimitNone = "Calculated limit: none (unlimited on wallbox)"
+        static let applyChargeLimit = "Apply Charge Limit"
+        static let noChargeLimit = "Energy limit: none (unlimited)"
+        static let energyLimitWhFormat = "Energy limit: %.1f kWh (%d Wh)"
     }
 }

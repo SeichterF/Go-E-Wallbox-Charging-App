@@ -78,3 +78,13 @@ See CONTEXT.md for API reference and business logic. See ARCHITECTURE.md for pro
 
 - Commit after every working feature – not after every file change
 - If the agent breaks something, revert to last commit rather than trying to fix forward
+
+---
+
+## Git Branching (agent workflow)
+
+- Never commit directly on `main` unless the user explicitly asks for it
+- New work always starts from an up-to-date `main` (or the user’s chosen base branch) on a dedicated branch:
+  - Features: `feature/<short-kebab-description>` (no ticket numbers; describe the outcome, e.g. `feature/live-wallbox-status`)
+  - Bug fixes: `bugfix/<short-kebab-description>`
+- Avoid Cursor-generated branch names like `cursor/<id>`; prefer the naming scheme above

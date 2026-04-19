@@ -19,23 +19,39 @@ struct DashboardView: View {
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
 
-                    Text(AppConstants.UI.currentSOCFieldLabel)
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
+                    HStack(alignment: .center, spacing: 12) {
+                        Text(AppConstants.UI.currentSOCFieldLabel)
+                            .font(.body)
 
-                    TextField(
-                        AppConstants.UI.currentSOCTextFieldPlaceholder,
-                        text: Binding(
-                            get: { viewModel.currentSOCText },
-                            set: { viewModel.replaceCurrentSOCTextWithSanitizedUserInput($0) }
+                        Spacer(minLength: 8)
+
+                        HStack(spacing: 4) {
+                            TextField(
+                                AppConstants.UI.currentSOCTextFieldPlaceholder,
+                                text: Binding(
+                                    get: { viewModel.currentSOCText },
+                                    set: { viewModel.replaceCurrentSOCTextWithSanitizedUserInput($0) }
+                                )
+                            )
+                            .keyboardType(.numberPad)
+                            .textContentType(.none)
+                            .autocorrectionDisabled()
+                            .multilineTextAlignment(.trailing)
+                            .frame(minWidth: 44, idealWidth: 56, maxWidth: 72)
+
+                            Text(AppConstants.UI.currentSOCPercentSuffix)
+                                .font(.body)
+                                .foregroundStyle(.secondary)
+                        }
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 8)
+                        .background(.secondary.opacity(0.18))
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .strokeBorder(.secondary.opacity(0.35), lineWidth: 1)
                         )
-                    )
-                    .keyboardType(.numberPad)
-                    .textContentType(.none)
-                    .autocorrectionDisabled()
-
-                    Text(String(format: AppConstants.UI.currentSOCFormat, viewModel.parsedCurrentSOCPercent))
-                        .font(.body)
+                    }
 
                     if viewModel.previewChargeLimitWh > 0 {
                         Text(

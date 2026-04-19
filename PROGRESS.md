@@ -1,6 +1,6 @@
 # Progress: go-e Wallbox iOS App
 
-## Status: 🟡 MVP in Progress (Feature 1 done)
+## Status: 🟡 MVP in Progress (Features 1–2 done)
 
 ---
 
@@ -27,27 +27,26 @@
 - [x] Feature 1 implemented: live wallbox status display in Dashboard
   - Real `GET /api/status` call in `WallboxAPIClient.fetchStatus()`
   - Mapping of `car` state to human-readable status labels
-  - Display of connection state, charging power, and session energy
+  - Display of connection state, charging power, session energy, and active `dwo` limit
   - Auto-refresh on Dashboard open
 - [x] Default wallbox IP updated to `192.168.178.69` in `AppSettings`
-- [x] Branch synced with latest `main` (fast-forward merge)
+- [x] Feature 2 implemented: charge limit from current SOC (Dashboard)
+  - Formula: needed battery Wh to target SOC ÷ `chargingEnergyDivisor` → `dwo` (Wh), `GET /api/set?dwo=…`, then status refresh
+  - Numeric **Current SOC** text field beside label (number pad, digits only, default 0%), **%** suffix, debounced auto-sync to wallbox (no separate apply button)
+  - Renamed setting: `chargingEnergyDivisor` (default 0.85); `CONTEXT.md` and related docs aligned
 
 ---
 
 ## In Progress
-- [ ] Feature 2: Charge limit control (SOC input -> calculation -> API set)
 - [ ] Feature 3: Settings persistence and validation hardening
 
 ---
 
 ## Up Next
-1. Implement `ChargeLimitViewModel` calculation flow (current SOC -> `dwo` in Wh)
-2. Add wallbox SET call (`/api/set?dwo=...`) in API client/service
-3. Refresh status automatically after successful SET call
-4. Add/complete `ChargeLimitView` for SOC input and confirmation UX
-5. Persist settings via `@AppStorage` in `AppSettings`
-6. Add polling loop in Dashboard ViewModel (15-20 seconds)
-7. Improve error surfacing UX (network/API errors in views)
+1. Persist settings via `@AppStorage` (or equivalent) in `AppSettings`
+2. Add polling loop in Dashboard ViewModel (15–20 seconds) if continuous updates are desired without manual refresh
+3. Improve error surfacing UX (network/API errors in views)
+4. Optional: toolbar “Done” above number pad to dismiss keyboard
 
 ---
 
@@ -56,7 +55,7 @@
 - [ ] Synology poller script (Python)
 - [ ] Supabase Edge Function for APNs relay
 - [ ] Charging session history / log
-- [ ] Deep link from notification into ChargeLimitView
+- [ ] Deep link from notification into charge-limit flow
 - [ ] Tailscale remote access setup (no app code changes needed)
 
 ---

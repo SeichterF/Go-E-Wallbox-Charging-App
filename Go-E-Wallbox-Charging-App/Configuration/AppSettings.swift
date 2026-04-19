@@ -6,7 +6,7 @@ final class AppSettings {
     var chargerIP: String = "192.168.178.69"
     var batterySizeKWh: Double = 60.0
     var targetSOCPercent: Int = 80
-    var chargingLossFactor: Double = 1.10
+    var chargingLossFactor: Double = 0.85
     var pollingIntervalSeconds: TimeInterval = 15.0
 
     let minSOCPercent: Int = 10

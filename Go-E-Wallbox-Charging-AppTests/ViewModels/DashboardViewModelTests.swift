@@ -30,17 +30,17 @@ struct DashboardViewModelTests {
     func applyChargeLimitUpdatesWallboxLimitAndRefreshesStatus() async {
         let appSettings = AppSettings()
         appSettings.targetSOCPercent = 80
-        appSettings.batterySizeKWh = 77
-        appSettings.chargingLossFactor = 1.1
+        appSettings.batterySizeKWh = 15351.0 * 0.85 / 430.0
+        appSettings.chargingLossFactor = 0.85
 
         let service = ApplyChargeLimitServiceMock()
         let viewModel = DashboardViewModel(service: service, settings: appSettings)
-        viewModel.currentSOCPercent = 20
+        viewModel.currentSOCPercent = 37
 
         await viewModel.applyChargeLimit()
 
-        #expect(service.lastAppliedChargeLimitWh == 50820)
-        #expect(viewModel.status.chargeLimitWh == 50820)
+        #expect(service.lastAppliedChargeLimitWh == 15351)
+        #expect(viewModel.status.chargeLimitWh == 15351)
         #expect(viewModel.errorMessage == nil)
         #expect(viewModel.isLoading == false)
     }

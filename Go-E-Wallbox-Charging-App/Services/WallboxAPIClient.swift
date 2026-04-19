@@ -27,22 +27,34 @@ struct WallboxAPIClient {
         let powerKwFromNRG = powerFromEnergyArray(jsonObject["nrg"])
         let chargingPowerW = Int((powerKwFromNRG * 1000.0).rounded())
         let sessionEnergyWh = intValue(from: jsonObject["wh"]) ?? 0
+        let chargeLimitWh = intValue(from: jsonObject["dwo"]) ?? 0
 
         return WallboxStatus(
             isConnected: carStatusValue != 0,
             connectionState: mapConnectionState(from: carStatusValue),
             chargingPowerW: chargingPowerW,
-            energyPerDayWh: sessionEnergyWh
+            energyPerDayWh: sessionEnergyWh,
+            chargeLimitWh: chargeLimitWh
         )
     }
 
-    func updateChargingSettings(_ settings: ChargingSettings) async throws {
-        guard URL(string: self.settings.apiBaseURLString) != nil else {
+    func setChargeEnergyLimitWh(_ dwoWh: Int) async throws {
+        guard var components = URLComponents(string: "\(settings.apiBaseURLString)set") else {
             throw URLError(.badURL)
         }
 
-        _ = settings
-        // Placeholder: real SET call will be added in feature implementation.
+        components.queryItems = [URLQueryItem(name: "dwo", value: String(dwoWh))]
+
+        guard let url = components.url else {
+            throw URLError(.badURL)
+        }
+
+        let (_, response) = try await URLSession.shared.data(from: url)
+
+        guard let httpResponse = response as? HTTPURLResponse,
+              200..<300 ~= httpResponse.statusCode else {
+            throw URLError(.badServerResponse)
+        }
     }
 
     private func mapConnectionState(from carValue: Int) -> WallboxStatus.ConnectionState {

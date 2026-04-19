@@ -9,7 +9,7 @@ enum AppConstants {
         static let wallboxIP = "Wallbox IP"
         static let batterySizeKWh = "Battery Size (kWh)"
         static let targetSOCFormat = "Target SOC: %d%%"
-        static let lossFactor = "Loss Factor"
+        static let chargingEnergyDivisor = "Charging energy divisor"
         static let wallboxStatusFormat = "Wallbox Status: %@"
         static let chargingPowerFormat = "Charging Power: %d W"
         static let energyTodayFormat = "Energy Today: %d Wh"
@@ -22,5 +22,12 @@ enum AppConstants {
         static let statusComplete = "Charge Complete"
         static let statusUnknown = "Unknown"
         static let loading = "Loading..."
+        static let currentSOCFieldLabel = "Current SOC"
+        static let currentSOCPercentSuffix = "%"
+        static let currentSOCTextFieldPlaceholder = "0"
+        static let calculatedChargeLimitFormat = "Calculated limit: %.1f kWh (%d Wh)"
+        static let calculatedChargeLimitNone = "Calculated limit: none (unlimited on wallbox)"
+        static let noChargeLimit = "Energy limit: none (unlimited)"
+        static let energyLimitWhFormat = "Energy limit: %.1f kWh (%d Wh)"
     }
 }

@@ -17,7 +17,7 @@ struct Go_E_Wallbox_Charging_AppApp: App {
     var body: some Scene {
         WindowGroup {
             MainTabView(
-                dashboardViewModel: DashboardViewModel(service: wallboxService),
+                dashboardViewModel: DashboardViewModel(service: wallboxService, settings: appSettings),
                 settingsViewModel: SettingsViewModel(settings: appSettings)
             )
         }

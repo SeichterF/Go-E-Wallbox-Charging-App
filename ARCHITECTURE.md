@@ -27,7 +27,7 @@ WallboxApp/
 │   ├── ContentView.swift        # Root view / tab container
 │   ├── StatusView.swift         # Live status display
 │   ├── ChargeLimitView.swift    # SOC input + calculated limit + confirm action
-│   └── SettingsView.swift       # IP, battery capacity, target SOC, loss factor
+│   └── SettingsView.swift       # IP, battery capacity, target SOC, charging energy divisor
 │
 └── Settings/
     └── AppSettings.swift        # @AppStorage wrapper for user preferences
@@ -55,13 +55,13 @@ WallboxApp/
 - Exposes loading/error state to views
 
 ### ChargeLimitViewModel
-- Holds input state: `currentSOC`, reads `batteryCapacity`, `targetSOC`, `lossFactor` from AppSettings
+- Holds input state: `currentSOC`, reads `batteryCapacity`, `targetSOC`, `chargingEnergyDivisor` from AppSettings
 - Computed property: `calculatedLimitKWh` and `calculatedLimitPercent`
 - `confirmAndSend()` calls WallboxService and handles result
 
 ### AppSettings
 - `@AppStorage` for all user-configurable values
-- Single source of truth for: wallbox IP, batteryCapacity, targetSOC, lossFactor
+- Single source of truth for: wallbox IP, batteryCapacity, targetSOC, chargingEnergyDivisor
 - Injected into Service and ViewModels via environment or init
 
 ---

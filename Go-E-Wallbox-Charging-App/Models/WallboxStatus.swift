@@ -14,6 +14,8 @@ struct WallboxStatus: Equatable {
     let connectionState: ConnectionState
     let chargingPowerW: Int
     let energyPerDayWh: Int
+    /// Active charge energy limit from wallbox `dwo` (Wh); `0` means no limit.
+    let chargeLimitWh: Int
 
     var connectionStateLabel: String {
         switch connectionState {
@@ -36,6 +38,7 @@ struct WallboxStatus: Equatable {
         isConnected: false,
         connectionState: .unknown,
         chargingPowerW: 0,
-        energyPerDayWh: 0
+        energyPerDayWh: 0,
+        chargeLimitWh: 0
     )
 }

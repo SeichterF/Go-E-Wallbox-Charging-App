@@ -14,7 +14,8 @@ struct WallboxService: WallboxServiceProtocol {
         return try await apiClient.fetchStatus()
     }
 
-    func updateChargingSettings(_ settings: ChargingSettings) async throws {
-        try await apiClient.updateChargingSettings(settings)
+    func updateChargingSettings(_ chargingSettings: ChargingSettings) async throws {
+        let dwoWh = chargingSettings.computedChargeLimitWh
+        try await apiClient.setChargeEnergyLimitWh(dwoWh)
     }
 }

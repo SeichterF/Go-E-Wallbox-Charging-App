@@ -59,20 +59,23 @@ This replicates the existing iOS Shortcut logic:
 | `currentSOC` | Current battery state of charge (%) | 20 |
 | `targetSOC` | Maximum charge target (%) | 80 |
 | `batteryCapacity` | Vehicle battery size (kWh) | 77 |
-| `lossFactor` | Charging loss compensation factor | 1.1 |
+| `chargingEnergyDivisor` | Divide needed battery Wh by this to get wallbox `dwo` Wh | 0.85 |
 
 ### Formula
 ```swift
-let deltaSOC = targetSOC - currentSOC          // e.g. 60%
-let netEnergy = deltaSOC / 100 * batteryCapacity  // e.g. 46.2 kWh
-let grossEnergy = netEnergy * lossFactor           // e.g. 50.82 kWh
-let dwoValue = Int(grossEnergy * 1000)             // e.g. 50820 Wh → sent to API
+let deltaSOC = targetSOC - currentSOC                    // e.g. 43%
+let neededBatteryKWh = deltaSOC / 100 * batteryCapacity   // e.g. kWh still to fill in the pack
+let neededBatteryWh = neededBatteryKWh * 1000
+let wallboxWh = neededBatteryWh / chargingEnergyDivisor   // e.g. divide by 0.85
+let dwoValue = Int(wallboxWh.rounded())                   // Wh → sent to API
 ```
+
+Example: current 37%, target 80%, battery ≈30.345 kWh, factor 0.85 → `dwo` ≈ 15351 Wh.
 
 ### User-Configurable Parameters (stored in app Settings)
 - `batteryCapacity` (kWh) – vehicle specific
 - `targetSOC` (%) – default e.g. 80%
-- `lossFactor` – default e.g. 1.1
+- `chargingEnergyDivisor` – default e.g. 0.85 (must be > 0)
 
 ### Runtime Input (entered per charging session)
 - `currentSOC` (%) – entered by user when starting a session
@@ -88,15 +91,15 @@ let dwoValue = Int(grossEnergy * 1000)             // e.g. 50820 Wh → sent to 
 - Active charge limit (kWh and %)
 
 ### Charge Limit Control
-- Input: current SOC
-- Calculated output: energy limit in kWh (shown before confirming)
-- Action: send `dwo` value to wallbox API
+- Input: current SOC (numeric text field, default 0%)
+- Calculated output: energy limit in kWh (live preview)
+- Action: send `dwo` to wallbox API after a short debounce when the value changes
 
 ### Settings
 - Wallbox IP address
 - Battery capacity (kWh)
 - Target SOC (%)
-- Loss factor
+- Charging energy divisor
 
 ---
 

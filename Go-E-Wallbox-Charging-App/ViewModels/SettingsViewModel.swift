@@ -12,7 +12,7 @@ final class SettingsViewModel {
     var chargerIP: String
     var batterySizeKWh: Double
     var targetSOCPercent: Int
-    var chargingLossFactor: Double
+    var chargingEnergyDivisor: Double
     var minSOCPercent: Int
     var maxSOCPercent: Int
     var socStepPercent: Int
@@ -22,7 +22,7 @@ final class SettingsViewModel {
         chargerIP = settings.chargerIP
         batterySizeKWh = settings.batterySizeKWh
         targetSOCPercent = settings.targetSOCPercent
-        chargingLossFactor = settings.chargingLossFactor
+        chargingEnergyDivisor = settings.chargingEnergyDivisor
         minSOCPercent = settings.minSOCPercent
         maxSOCPercent = settings.maxSOCPercent
         socStepPercent = settings.socStepPercent
@@ -35,7 +35,7 @@ final class SettingsViewModel {
         settings.chargerIP = chargerIP
         settings.batterySizeKWh = batterySizeKWh
         settings.targetSOCPercent = targetSOCPercent
-        settings.chargingLossFactor = chargingLossFactor
+        settings.chargingEnergyDivisor = chargingEnergyDivisor
 
         isLoading = false
     }

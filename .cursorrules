@@ -30,7 +30,7 @@ See CONTEXT.md for API reference and business logic. See ARCHITECTURE.md for pro
 - Views contain zero business logic – only layout and user interaction forwarding
 - ViewModels contain zero URLSession or HTTP code – always call through WallboxService
 - WallboxService is the only place that knows about the go-e API
-- All user preferences (IP, battery size, target SOC, loss factor) go through AppSettings
+- All user preferences (IP, battery size, target SOC, charging energy divisor) go through AppSettings
 - Never bypass the ViewModel to call a Service directly from a View
 
 ---

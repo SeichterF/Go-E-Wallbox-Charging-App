@@ -9,7 +9,7 @@ enum AppConstants {
         static let wallboxIP = "Wallbox IP"
         static let batterySizeKWh = "Battery Size (kWh)"
         static let targetSOCFormat = "Target SOC: %d%%"
-        static let lossFactor = "Charging factor (÷)"
+        static let chargingEnergyDivisor = "Charging energy divisor"
         static let wallboxStatusFormat = "Wallbox Status: %@"
         static let chargingPowerFormat = "Charging Power: %d W"
         static let energyTodayFormat = "Energy Today: %d Wh"

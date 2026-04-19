@@ -8,7 +8,7 @@ struct WallboxServiceTests {
             currentSOCPercent: 20,
             targetSOCPercent: 80,
             batterySizeKWh: 77,
-            chargingLossFactor: 1.1
+            chargingEnergyDivisor: 1.1
         )
 
         // (80-20)% of 77 kWh → 46.2 kWh → 46200 Wh from battery perspective, ÷ 1.1
@@ -22,7 +22,7 @@ struct WallboxServiceTests {
             currentSOCPercent: 37,
             targetSOCPercent: 80,
             batterySizeKWh: batteryKWh,
-            chargingLossFactor: 0.85
+            chargingEnergyDivisor: 0.85
         )
 
         #expect(chargingSettings.computedChargeLimitWh == 15351)
@@ -34,7 +34,7 @@ struct WallboxServiceTests {
             currentSOCPercent: 80,
             targetSOCPercent: 80,
             batterySizeKWh: 77,
-            chargingLossFactor: 0.85
+            chargingEnergyDivisor: 0.85
         )
 
         #expect(chargingSettings.computedChargeLimitWh == 0)

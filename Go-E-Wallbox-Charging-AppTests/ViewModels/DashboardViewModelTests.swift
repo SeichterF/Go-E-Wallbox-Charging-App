@@ -31,7 +31,7 @@ struct DashboardViewModelTests {
         let appSettings = AppSettings()
         appSettings.targetSOCPercent = 80
         appSettings.batterySizeKWh = 15351.0 * 0.85 / 430.0
-        appSettings.chargingLossFactor = 0.85
+        appSettings.chargingEnergyDivisor = 0.85
 
         let service = ApplyChargeLimitServiceMock()
         let viewModel = DashboardViewModel(service: service, settings: appSettings)

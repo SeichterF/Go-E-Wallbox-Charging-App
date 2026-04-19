@@ -59,14 +59,14 @@ This replicates the existing iOS Shortcut logic:
 | `currentSOC` | Current battery state of charge (%) | 20 |
 | `targetSOC` | Maximum charge target (%) | 80 |
 | `batteryCapacity` | Vehicle battery size (kWh) | 77 |
-| `lossFactor` | Charging factor (wallbox energy ÷ this value) | 0.85 |
+| `chargingEnergyDivisor` | Divide needed battery Wh by this to get wallbox `dwo` Wh | 0.85 |
 
 ### Formula
 ```swift
 let deltaSOC = targetSOC - currentSOC                    // e.g. 43%
 let neededBatteryKWh = deltaSOC / 100 * batteryCapacity   // e.g. kWh still to fill in the pack
 let neededBatteryWh = neededBatteryKWh * 1000
-let wallboxWh = neededBatteryWh / lossFactor              // e.g. divide by 0.85
+let wallboxWh = neededBatteryWh / chargingEnergyDivisor   // e.g. divide by 0.85
 let dwoValue = Int(wallboxWh.rounded())                   // Wh → sent to API
 ```
 
@@ -75,7 +75,7 @@ Example: current 37%, target 80%, battery ≈30.345 kWh, factor 0.85 → `dwo` �
 ### User-Configurable Parameters (stored in app Settings)
 - `batteryCapacity` (kWh) – vehicle specific
 - `targetSOC` (%) – default e.g. 80%
-- `lossFactor` (charging factor) – default e.g. 0.85 (must be > 0)
+- `chargingEnergyDivisor` – default e.g. 0.85 (must be > 0)
 
 ### Runtime Input (entered per charging session)
 - `currentSOC` (%) – entered by user when starting a session
@@ -99,7 +99,7 @@ Example: current 37%, target 80%, battery ≈30.345 kWh, factor 0.85 → `dwo` �
 - Wallbox IP address
 - Battery capacity (kWh)
 - Target SOC (%)
-- Loss factor
+- Charging energy divisor
 
 ---
 

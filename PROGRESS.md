@@ -7,7 +7,7 @@
 ## MVP Scope
 1. Status display (connection state, power, session energy, active limit)
 2. Charge limit control (SOC input → kWh calculation → send to wallbox)
-3. Settings (IP, battery capacity, target SOC, loss factor)
+3. Settings (IP, battery capacity, target SOC, charging energy divisor)
 
 ---
 

@@ -91,9 +91,9 @@ Example: current 37%, target 80%, battery ≈30.345 kWh, factor 0.85 → `dwo` �
 - Active charge limit (kWh and %)
 
 ### Charge Limit Control
-- Input: current SOC
-- Calculated output: energy limit in kWh (shown before confirming)
-- Action: send `dwo` value to wallbox API
+- Input: current SOC (numeric text field, default 0%)
+- Calculated output: energy limit in kWh (live preview)
+- Action: send `dwo` to wallbox API after a short debounce when the value changes
 
 ### Settings
 - Wallbox IP address

@@ -27,7 +27,7 @@ struct DashboardViewModelTests {
 
     @MainActor
     @Test
-    func applyChargeLimitUpdatesWallboxLimitAndRefreshesStatus() async {
+    func synchronizeChargeLimitUpdatesWallboxLimitAndRefreshesStatus() async {
         let appSettings = AppSettings()
         appSettings.targetSOCPercent = 80
         appSettings.batterySizeKWh = 15351.0 * 0.85 / 430.0
@@ -35,9 +35,9 @@ struct DashboardViewModelTests {
 
         let service = ApplyChargeLimitServiceMock()
         let viewModel = DashboardViewModel(service: service, settings: appSettings)
-        viewModel.currentSOCPercent = 37
+        viewModel.currentSOCText = "37"
 
-        await viewModel.applyChargeLimit()
+        await viewModel.synchronizeChargeLimitWithWallbox()
 
         #expect(service.lastAppliedChargeLimitWh == 15351)
         #expect(viewModel.status.chargeLimitWh == 15351)

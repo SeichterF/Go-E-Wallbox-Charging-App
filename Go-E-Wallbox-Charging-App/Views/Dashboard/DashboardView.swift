@@ -19,13 +19,23 @@ struct DashboardView: View {
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
 
-                    Stepper(
-                        value: $viewModel.currentSOCPercent,
-                        in: viewModel.minSOCPercent...viewModel.maxSOCPercent,
-                        step: viewModel.socStepPercent
-                    ) {
-                        Text(String(format: AppConstants.UI.currentSOCFormat, viewModel.currentSOCPercent))
-                    }
+                    Text(AppConstants.UI.currentSOCFieldLabel)
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+
+                    TextField(
+                        AppConstants.UI.currentSOCTextFieldPlaceholder,
+                        text: Binding(
+                            get: { viewModel.currentSOCText },
+                            set: { viewModel.replaceCurrentSOCTextWithSanitizedUserInput($0) }
+                        )
+                    )
+                    .keyboardType(.numberPad)
+                    .textContentType(.none)
+                    .autocorrectionDisabled()
+
+                    Text(String(format: AppConstants.UI.currentSOCFormat, viewModel.parsedCurrentSOCPercent))
+                        .font(.body)
 
                     if viewModel.previewChargeLimitWh > 0 {
                         Text(
@@ -40,13 +50,6 @@ struct DashboardView: View {
                         Text(AppConstants.UI.calculatedChargeLimitNone)
                             .font(.subheadline)
                     }
-
-                    PrimaryButton(title: AppConstants.UI.applyChargeLimit) {
-                        Task {
-                            await viewModel.applyChargeLimit()
-                        }
-                    }
-                    .disabled(viewModel.isLoading)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding()

@@ -6,7 +6,7 @@ This file is the primary reference for AI assistants working in this repository.
 
 ## Project Overview
 
-iOS app (SwiftUI, MVVM) that provides a native UI for controlling a **go-e Wallbox** EV charger via its local HTTP API v2. Replaces manual iOS Shortcuts with a proper native app. Written in Swift 5.9+, targets iOS 17 (`@Observable`).
+iOS app (SwiftUI, MVVM) that provides a native UI for controlling a **go-e Wallbox** EV charger via its local HTTP API v2. Replaces manual iOS Shortcuts with a proper native app. Written in Swift 6, targets iOS 25.
 
 See [`CONTEXT.md`](CONTEXT.md) for API field reference and charge-limit formula. See [`ARCHITECTURE.md`](ARCHITECTURE.md) for architectural diagrams and layer responsibilities.
 
@@ -16,10 +16,10 @@ See [`CONTEXT.md`](CONTEXT.md) for API field reference and charge-limit formula.
 
 | Concern | Technology |
 |---|---|
-| Language | Swift 5.9+ |
+| Language | Swift 6 |
 | UI | SwiftUI, async/await — no Combine, no callbacks |
-| State | `@Observable` (iOS 17) — not `ObservableObject` |
-| Minimum iOS | iOS 17 |
+| State | `@Observable` — not `ObservableObject` |
+| Minimum iOS | iOS 25 |
 | Third-party packages | None |
 | Testing | Swift Testing framework (`@Test`, `#expect`) |
 | Hardware API | go-e HTTP API v2 (local network) |

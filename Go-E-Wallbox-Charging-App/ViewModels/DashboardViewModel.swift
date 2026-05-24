@@ -42,7 +42,7 @@ final class DashboardViewModel {
             currentSOCPercent: parsedCurrentSOCPercent,
             targetSOCPercent: settings.targetSOCPercent,
             batterySizeKWh: settings.batterySizeKWh,
-            chargingEnergyDivisor: settings.chargingEnergyDivisor
+            chargingEnergyFactor: settings.chargingEnergyFactor
         )
     }
 

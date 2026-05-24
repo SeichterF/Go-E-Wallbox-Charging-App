@@ -25,7 +25,7 @@ struct SettingsView: View {
                     Text(String(format: AppConstants.UI.targetSOCFormat, viewModel.targetSOCPercent))
                 }
 
-                TextField(AppConstants.UI.chargingEnergyDivisor, value: $viewModel.chargingEnergyDivisor, format: .number)
+                TextField(AppConstants.UI.chargingEnergyFactor, value: $viewModel.chargingEnergyFactor, format: .number)
                     .keyboardType(.decimalPad)
 
                 PrimaryButton(title: AppConstants.UI.save) {

@@ -30,8 +30,8 @@ struct DashboardViewModelTests {
     func synchronizeChargeLimitUpdatesWallboxLimitAndRefreshesStatus() async {
         let appSettings = AppSettings()
         appSettings.targetSOCPercent = 80
-        appSettings.batterySizeKWh = 15351.0 * 0.85 / 430.0
-        appSettings.chargingEnergyDivisor = 0.85
+        appSettings.batterySizeKWh = 42
+        appSettings.chargingEnergyFactor = 0.85
 
         let service = ApplyChargeLimitServiceMock()
         let viewModel = DashboardViewModel(service: service, settings: appSettings)

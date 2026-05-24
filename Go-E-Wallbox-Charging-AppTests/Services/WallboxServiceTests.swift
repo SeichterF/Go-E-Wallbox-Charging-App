@@ -3,28 +3,28 @@ import Testing
 
 struct WallboxServiceTests {
     @Test
-    func chargingSettingsComputedChargeLimitDividesBatteryNeedByFactor() {
+    func chargingSettingsComputedChargeLimitMultipliesBatteryNeedByFactor() {
         let chargingSettings = ChargingSettings(
             currentSOCPercent: 20,
             targetSOCPercent: 80,
-            batterySizeKWh: 77,
-            chargingEnergyDivisor: 1.1
+            batterySizeKWh: 42,
+            chargingEnergyFactor: 0.85
         )
 
-        // (80-20)% of 77 kWh → 46.2 kWh → 46200 Wh from battery perspective, ÷ 1.1
-        #expect(chargingSettings.computedChargeLimitWh == 42000)
+        // (80-20)% of 42 kWh → 25200 Wh × 0.85
+        #expect(chargingSettings.computedChargeLimitWh == 21420)
     }
 
     @Test
     func chargingSettingsMatchesExampleThirtySevenToEightyWithFactorPointEightFive() {
-        let batteryKWh = 15351.0 * 0.85 / 430.0
         let chargingSettings = ChargingSettings(
             currentSOCPercent: 37,
             targetSOCPercent: 80,
-            batterySizeKWh: batteryKWh,
-            chargingEnergyDivisor: 0.85
+            batterySizeKWh: 42,
+            chargingEnergyFactor: 0.85
         )
 
+        // (80-37)% of 42 kWh → 18060 Wh × 0.85
         #expect(chargingSettings.computedChargeLimitWh == 15351)
     }
 
@@ -33,8 +33,8 @@ struct WallboxServiceTests {
         let chargingSettings = ChargingSettings(
             currentSOCPercent: 80,
             targetSOCPercent: 80,
-            batterySizeKWh: 77,
-            chargingEnergyDivisor: 0.85
+            batterySizeKWh: 42,
+            chargingEnergyFactor: 0.85
         )
 
         #expect(chargingSettings.computedChargeLimitWh == 0)

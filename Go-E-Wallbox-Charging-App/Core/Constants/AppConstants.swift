@@ -14,7 +14,7 @@ enum AppConstants {
         // Settings – field labels
         static let wallboxIP = "Wallbox IP"
         static let batterySizeKWh = "Battery Size"
-        static let targetSOCFormat = "Target SOC: %d %%"
+        static let targetBatteryLevel = "Target Battery Level"
         static let chargingEnergyFactor = "Energy Factor"
 
         // Settings – units

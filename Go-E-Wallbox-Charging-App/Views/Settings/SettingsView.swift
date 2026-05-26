@@ -38,7 +38,13 @@ struct SettingsView: View {
                         in: viewModel.minSOCPercent...viewModel.maxSOCPercent,
                         step: viewModel.socStepPercent
                     ) {
-                        Text(String(format: AppConstants.UI.targetSOCFormat, viewModel.targetSOCPercent))
+                        LabeledContent(AppConstants.UI.targetBatteryLevel) {
+                            HStack(spacing: 2) {
+                                Text("\(viewModel.targetSOCPercent)")
+                                Text(AppConstants.UI.unitPercent)
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
                     }
                 }
 

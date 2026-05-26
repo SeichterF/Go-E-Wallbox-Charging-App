@@ -4,7 +4,6 @@ enum AppConstants {
     enum UI {
         static let dashboardTitle = "Dashboard"
         static let settingsTitle = "Settings"
-        static let refresh = "Refresh"
         static let save = "Save"
         // Settings – section headers
         static let settingsSectionConnection = "Connection"

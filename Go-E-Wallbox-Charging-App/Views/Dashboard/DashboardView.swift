@@ -2,6 +2,7 @@ import SwiftUI
 
 struct DashboardView: View {
     @State private var viewModel: DashboardViewModel
+    @Environment(\.scenePhase) private var scenePhase
 
     init(viewModel: DashboardViewModel) {
         _viewModel = State(initialValue: viewModel)
@@ -77,17 +78,12 @@ struct DashboardView: View {
                         .foregroundStyle(.red)
                 }
 
-                PrimaryButton(title: AppConstants.UI.refresh) {
-                    Task {
-                        await viewModel.refreshStatus()
-                    }
-                }
-                .disabled(viewModel.isLoading)
             }
             .padding()
             .navigationTitle(AppConstants.UI.dashboardTitle)
-            .task {
-                await viewModel.refreshStatus()
+            .task(id: scenePhase == .active) {
+                guard scenePhase == .active else { return }
+                await viewModel.startPolling()
             }
         }
     }

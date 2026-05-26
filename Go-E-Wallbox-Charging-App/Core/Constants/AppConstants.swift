@@ -56,6 +56,7 @@ enum AppConstants {
         static let currentSOCFieldLabel = "Current Battery Level"
         static let currentSOCPercentSuffix = "%"
         static let currentSOCTextFieldPlaceholder = "0"
+        static let estimatedCurrentSOCLabel = "Estimated Current Level"
         static let calculatedChargeLimitLabel = "Calculated Limit"
         static let calculatedChargeLimitValueFormat = "%.1f kWh"
         static let calculatedChargeLimitTargetReached = "Target already reached"

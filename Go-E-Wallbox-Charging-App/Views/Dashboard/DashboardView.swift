@@ -135,6 +135,13 @@ struct DashboardView: View {
 
             Divider()
 
+            cardRow(label: AppConstants.UI.estimatedCurrentSOCLabel) {
+                Text("\(viewModel.calculatedCurrentSOCPercent) \(AppConstants.UI.unitPercent)")
+                    .font(.body.weight(.medium))
+            }
+
+            Divider()
+
             cardRow(label: AppConstants.UI.calculatedChargeLimitLabel) {
                 if viewModel.previewChargeLimitWh > 0 {
                     Text(String(

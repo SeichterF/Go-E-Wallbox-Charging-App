@@ -2,7 +2,7 @@ import Foundation
 
 enum AppConstants {
     enum UI {
-        static let dashboardTitle = "Dashboard"
+        static let dashboardTitle = "Overview"
         static let settingsTitle = "Settings"
         static let save = "Save"
         // Settings – section headers
@@ -62,6 +62,7 @@ enum AppConstants {
         static let calculatedChargeLimitFormat = "Calculated limit: %.1f kWh (%d Wh)"
         static let calculatedChargeLimitNone = "Calculated limit: none (unlimited on wallbox)"
         static let noChargeLimit = "Energy limit: none (unlimited)"
+        static let noChargeLimitValue = "None"
         static let energyLimitWhFormat = "Energy limit: %.1f kWh (%d Wh)"
     }
 }

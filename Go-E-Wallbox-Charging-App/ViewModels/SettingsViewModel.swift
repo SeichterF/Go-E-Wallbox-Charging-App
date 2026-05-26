@@ -9,34 +9,27 @@ final class SettingsViewModel {
     var isLoading = false
     var errorMessage: String?
 
-    var chargerIP: String
-    var batterySizeKWh: Double
-    var targetSOCPercent: Int
-    var chargingEnergyFactor: Double
-    var minSOCPercent: Int
-    var maxSOCPercent: Int
-    var socStepPercent: Int
+    var chargerIP: String {
+        get { settings.chargerIP }
+        set { settings.chargerIP = newValue }
+    }
+    var batterySizeKWh: Double {
+        get { settings.batterySizeKWh }
+        set { settings.batterySizeKWh = newValue }
+    }
+    var targetSOCPercent: Int {
+        get { settings.targetSOCPercent }
+        set { settings.targetSOCPercent = newValue }
+    }
+    var chargingEnergyFactor: Double {
+        get { settings.chargingEnergyFactor }
+        set { settings.chargingEnergyFactor = newValue }
+    }
+    var minSOCPercent: Int { settings.minSOCPercent }
+    var maxSOCPercent: Int { settings.maxSOCPercent }
+    var socStepPercent: Int { settings.socStepPercent }
 
     init(settings: AppSettings) {
         self.settings = settings
-        chargerIP = settings.chargerIP
-        batterySizeKWh = settings.batterySizeKWh
-        targetSOCPercent = settings.targetSOCPercent
-        chargingEnergyFactor = settings.chargingEnergyFactor
-        minSOCPercent = settings.minSOCPercent
-        maxSOCPercent = settings.maxSOCPercent
-        socStepPercent = settings.socStepPercent
-    }
-
-    func save() async {
-        isLoading = true
-        errorMessage = nil
-
-        settings.chargerIP = chargerIP
-        settings.batterySizeKWh = batterySizeKWh
-        settings.targetSOCPercent = targetSOCPercent
-        settings.chargingEnergyFactor = chargingEnergyFactor
-
-        isLoading = false
     }
 }

@@ -55,12 +55,6 @@ struct SettingsView: View {
                     }
                 }
 
-                PrimaryButton(title: AppConstants.UI.save) {
-                    Task {
-                        await viewModel.save()
-                    }
-                }
-                .disabled(viewModel.isLoading)
             }
             .navigationTitle(AppConstants.UI.settingsTitle)
         }

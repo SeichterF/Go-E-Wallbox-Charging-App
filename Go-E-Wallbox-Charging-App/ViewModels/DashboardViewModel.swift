@@ -50,6 +50,14 @@ final class DashboardViewModel {
         chargingSettingsForApply.computedChargeLimitWh
     }
 
+    var calculatedCurrentSOCPercent: Int {
+        guard settings.batterySizeKWh > 0 else { return parsedCurrentSOCPercent }
+        let chargedKWh = Double(status.energyPerDayWh) / 1000.0
+        let storedKWh = chargedKWh * settings.chargingEnergyFactor
+        let socGain = storedKWh / settings.batterySizeKWh * 100.0
+        return min(100, parsedCurrentSOCPercent + Int(socGain.rounded()))
+    }
+
     func startPolling() async {
         while !Task.isCancelled {
             await refreshStatus()

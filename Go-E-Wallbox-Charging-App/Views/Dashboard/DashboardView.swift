@@ -63,8 +63,8 @@ struct DashboardView: View {
                                 .foregroundStyle(.secondary)
                         }
                     }
-                    if viewModel.previewChargeLimitWh > 0 {
-                        LabeledContent(AppConstants.UI.calculatedChargeLimitLabel) {
+                    LabeledContent(AppConstants.UI.calculatedChargeLimitLabel) {
+                        if viewModel.previewChargeLimitWh > 0 {
                             Text(
                                 String(
                                     format: AppConstants.UI.calculatedChargeLimitValueFormat,
@@ -72,6 +72,9 @@ struct DashboardView: View {
                                 )
                             )
                             .foregroundStyle(.secondary)
+                        } else {
+                            Text(AppConstants.UI.calculatedChargeLimitTargetReached)
+                                .foregroundStyle(.secondary)
                         }
                     }
                 }

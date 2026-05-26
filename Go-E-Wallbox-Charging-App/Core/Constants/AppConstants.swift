@@ -58,6 +58,7 @@ enum AppConstants {
         static let currentSOCTextFieldPlaceholder = "0"
         static let calculatedChargeLimitLabel = "Calculated Limit"
         static let calculatedChargeLimitValueFormat = "%.1f kWh"
+        static let calculatedChargeLimitTargetReached = "Target already reached"
         static let calculatedChargeLimitFormat = "Calculated limit: %.1f kWh (%d Wh)"
         static let calculatedChargeLimitNone = "Calculated limit: none (unlimited on wallbox)"
         static let noChargeLimit = "Energy limit: none (unlimited)"

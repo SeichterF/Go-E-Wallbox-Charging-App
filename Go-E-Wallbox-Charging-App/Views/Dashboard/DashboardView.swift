@@ -40,10 +40,7 @@ struct DashboardView: View {
                     }
                 }
 
-                Section(
-                    header: Text(AppConstants.UI.dashboardSectionChargeLimit),
-                    footer: chargeLimitFooter
-                ) {
+                Section(AppConstants.UI.dashboardSectionChargeLimit) {
                     LabeledContent(AppConstants.UI.targetBatteryLevel) {
                         Text("\(viewModel.targetSOCPercent) \(AppConstants.UI.unitPercent)")
                             .foregroundStyle(.secondary)
@@ -66,6 +63,17 @@ struct DashboardView: View {
                                 .foregroundStyle(.secondary)
                         }
                     }
+                    if viewModel.previewChargeLimitWh > 0 {
+                        LabeledContent(AppConstants.UI.calculatedChargeLimitLabel) {
+                            Text(
+                                String(
+                                    format: AppConstants.UI.calculatedChargeLimitValueFormat,
+                                    Double(viewModel.previewChargeLimitWh) / 1000.0
+                                )
+                            )
+                            .foregroundStyle(.secondary)
+                        }
+                    }
                 }
 
                 if let errorMessage = viewModel.errorMessage {
@@ -83,20 +91,6 @@ struct DashboardView: View {
         }
     }
 
-    @ViewBuilder
-    private var chargeLimitFooter: some View {
-        if viewModel.previewChargeLimitWh > 0 {
-            Text(
-                String(
-                    format: AppConstants.UI.calculatedChargeLimitFormat,
-                    Double(viewModel.previewChargeLimitWh) / 1000.0,
-                    viewModel.previewChargeLimitWh
-                )
-            )
-        } else {
-            Text(AppConstants.UI.calculatedChargeLimitNone)
-        }
-    }
 }
 
 #Preview {

@@ -50,6 +50,18 @@ final class DashboardViewModel {
         chargingSettingsForApply.computedChargeLimitWh
     }
 
+    func startPolling() async {
+        while !Task.isCancelled {
+            await refreshStatus()
+            guard !Task.isCancelled else { break }
+            do {
+                try await Task.sleep(for: .seconds(settings.pollingIntervalSeconds))
+            } catch {
+                break
+            }
+        }
+    }
+
     func refreshStatus() async {
         isLoading = true
         errorMessage = nil

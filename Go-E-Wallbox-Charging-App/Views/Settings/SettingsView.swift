@@ -33,12 +33,14 @@ struct SettingsView: View {
                         }
                     }
 
-                    Stepper(
-                        value: $viewModel.targetSOCPercent,
-                        in: viewModel.minSOCPercent...viewModel.maxSOCPercent,
-                        step: viewModel.socStepPercent
-                    ) {
-                        Text(String(format: AppConstants.UI.targetSOCFormat, viewModel.targetSOCPercent))
+                    LabeledContent(AppConstants.UI.targetBatteryLevel) {
+                        HStack {
+                            TextField("80", value: $viewModel.targetSOCPercent, format: .number)
+                                .keyboardType(.numberPad)
+                                .multilineTextAlignment(.trailing)
+                            Text(AppConstants.UI.unitPercent)
+                                .foregroundStyle(.secondary)
+                        }
                     }
                 }
 

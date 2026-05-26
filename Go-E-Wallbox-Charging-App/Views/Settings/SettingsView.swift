@@ -10,23 +10,48 @@ struct SettingsView: View {
     var body: some View {
         NavigationStack {
             Form {
-                TextField(AppConstants.UI.wallboxIP, text: $viewModel.chargerIP)
-                    .textInputAutocapitalization(.never)
-                    .autocorrectionDisabled()
-
-                TextField(AppConstants.UI.batterySizeKWh, value: $viewModel.batterySizeKWh, format: .number)
-                    .keyboardType(.decimalPad)
-
-                Stepper(
-                    value: $viewModel.targetSOCPercent,
-                    in: viewModel.minSOCPercent...viewModel.maxSOCPercent,
-                    step: viewModel.socStepPercent
-                ) {
-                    Text(String(format: AppConstants.UI.targetSOCFormat, viewModel.targetSOCPercent))
+                Section(header: Text(AppConstants.UI.settingsSectionConnection)) {
+                    LabeledContent(AppConstants.UI.wallboxIP) {
+                        TextField("192.168.x.x", text: $viewModel.chargerIP)
+                            .textInputAutocapitalization(.never)
+                            .autocorrectionDisabled()
+                            .multilineTextAlignment(.trailing)
+                    }
                 }
 
-                TextField(AppConstants.UI.chargingEnergyFactor, value: $viewModel.chargingEnergyFactor, format: .number)
-                    .keyboardType(.decimalPad)
+                Section(
+                    header: Text(AppConstants.UI.settingsSectionBattery),
+                    footer: Text(AppConstants.UI.batterySizeFooter)
+                ) {
+                    LabeledContent(AppConstants.UI.batterySizeKWh) {
+                        HStack {
+                            TextField("42", value: $viewModel.batterySizeKWh, format: .number)
+                                .keyboardType(.decimalPad)
+                                .multilineTextAlignment(.trailing)
+                            Text(AppConstants.UI.unitKWh)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+
+                    Stepper(
+                        value: $viewModel.targetSOCPercent,
+                        in: viewModel.minSOCPercent...viewModel.maxSOCPercent,
+                        step: viewModel.socStepPercent
+                    ) {
+                        Text(String(format: AppConstants.UI.targetSOCFormat, viewModel.targetSOCPercent))
+                    }
+                }
+
+                Section(
+                    header: Text(AppConstants.UI.settingsSectionCharging),
+                    footer: Text(AppConstants.UI.chargingEnergyFactorFooter)
+                ) {
+                    LabeledContent(AppConstants.UI.chargingEnergyFactor) {
+                        TextField("0.85", value: $viewModel.chargingEnergyFactor, format: .number)
+                            .keyboardType(.decimalPad)
+                            .multilineTextAlignment(.trailing)
+                    }
+                }
 
                 PrimaryButton(title: AppConstants.UI.save) {
                     Task {

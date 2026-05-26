@@ -11,21 +11,41 @@ struct DashboardView: View {
     var body: some View {
         @Bindable var viewModel = viewModel
         NavigationStack {
-            VStack(spacing: 16) {
-                StatusBadge(isConnected: viewModel.status.isConnected)
-                ChargingCardView(status: viewModel.status)
+            Form {
+                Section(AppConstants.UI.dashboardSectionStatus) {
+                    LabeledContent(AppConstants.UI.dashboardStatusLabel) {
+                        StatusBadge(isConnected: viewModel.status.isConnected)
+                    }
+                    LabeledContent(
+                        AppConstants.UI.dashboardChargingPowerLabel,
+                        value: "\(viewModel.status.chargingPowerW) \(AppConstants.UI.unitWatt)"
+                    )
+                    LabeledContent(
+                        AppConstants.UI.dashboardEnergyTodayLabel,
+                        value: "\(viewModel.status.energyPerDayWh) \(AppConstants.UI.unitWh)"
+                    )
+                    if viewModel.status.chargeLimitWh > 0 {
+                        LabeledContent(
+                            AppConstants.UI.dashboardEnergyLimitLabel,
+                            value: String(
+                                format: AppConstants.UI.dashboardEnergyLimitValueFormat,
+                                Double(viewModel.status.chargeLimitWh) / 1000.0
+                            )
+                        )
+                    } else {
+                        LabeledContent(
+                            AppConstants.UI.dashboardEnergyLimitLabel,
+                            value: AppConstants.UI.noChargeLimit
+                        )
+                    }
+                }
 
-                VStack(alignment: .leading, spacing: 12) {
-                    Text("\(AppConstants.UI.targetBatteryLevel): \(viewModel.targetSOCPercent) \(AppConstants.UI.unitPercent)")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-
-                    HStack(alignment: .center, spacing: 12) {
-                        Text(AppConstants.UI.currentSOCFieldLabel)
-                            .font(.body)
-
-                        Spacer(minLength: 8)
-
+                Section(AppConstants.UI.dashboardSectionChargeLimit) {
+                    LabeledContent(AppConstants.UI.targetBatteryLevel) {
+                        Text("\(viewModel.targetSOCPercent) \(AppConstants.UI.unitPercent)")
+                            .foregroundStyle(.secondary)
+                    }
+                    LabeledContent(AppConstants.UI.currentSOCFieldLabel) {
                         HStack(spacing: 4) {
                             TextField(
                                 AppConstants.UI.currentSOCTextFieldPlaceholder,
@@ -39,47 +59,33 @@ struct DashboardView: View {
                             .autocorrectionDisabled()
                             .multilineTextAlignment(.trailing)
                             .frame(minWidth: 44, idealWidth: 56, maxWidth: 72)
-
                             Text(AppConstants.UI.currentSOCPercentSuffix)
-                                .font(.body)
                                 .foregroundStyle(.secondary)
                         }
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 8)
-                        .background(.secondary.opacity(0.18))
-                        .clipShape(RoundedRectangle(cornerRadius: 8))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 8)
-                                .strokeBorder(.secondary.opacity(0.35), lineWidth: 1)
-                        )
                     }
-
-                    if viewModel.previewChargeLimitWh > 0 {
-                        Text(
-                            String(
-                                format: AppConstants.UI.calculatedChargeLimitFormat,
-                                Double(viewModel.previewChargeLimitWh) / 1000.0,
-                                viewModel.previewChargeLimitWh
+                    LabeledContent(AppConstants.UI.calculatedChargeLimitLabel) {
+                        if viewModel.previewChargeLimitWh > 0 {
+                            Text(
+                                String(
+                                    format: AppConstants.UI.calculatedChargeLimitValueFormat,
+                                    Double(viewModel.previewChargeLimitWh) / 1000.0
+                                )
                             )
-                        )
-                        .font(.subheadline)
-                    } else {
-                        Text(AppConstants.UI.calculatedChargeLimitNone)
-                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                        } else {
+                            Text(AppConstants.UI.calculatedChargeLimitTargetReached)
+                                .foregroundStyle(.secondary)
+                        }
                     }
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding()
-                .background(.secondary.opacity(0.12))
-                .clipShape(RoundedRectangle(cornerRadius: 12))
 
                 if let errorMessage = viewModel.errorMessage {
-                    Text(errorMessage)
-                        .foregroundStyle(.red)
+                    Section {
+                        Text(errorMessage)
+                            .foregroundStyle(.red)
+                    }
                 }
-
             }
-            .padding()
             .navigationTitle(AppConstants.UI.dashboardTitle)
             .task(id: scenePhase == .active) {
                 guard scenePhase == .active else { return }
@@ -87,6 +93,7 @@ struct DashboardView: View {
             }
         }
     }
+
 }
 
 #Preview {

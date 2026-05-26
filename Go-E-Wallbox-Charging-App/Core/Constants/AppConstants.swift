@@ -23,6 +23,24 @@ enum AppConstants {
         // Settings – footer descriptions
         static let batterySizeFooter = "Total usable capacity of your EV battery."
         static let chargingEnergyFactorFooter = "Accounts for charging losses. 0.85 means the car requires ~18 % more energy than its net SOC gain."
+        // Dashboard – section headers
+        static let dashboardSectionStatus = "Status"
+        static let dashboardSectionChargeLimit = "Charge Limit"
+
+        // Dashboard – field labels
+        static let dashboardStatusLabel = "Connection"
+        static let dashboardChargingPowerLabel = "Charging Power"
+        static let dashboardEnergyTodayLabel = "Energy Today"
+        static let dashboardEnergyLimitLabel = "Energy Limit"
+
+        // Dashboard – units
+        static let unitWatt = "W"
+        static let unitWh = "Wh"
+
+        // Dashboard – formatted values
+        static let dashboardEnergyLimitValueFormat = "%.1f kWh"
+
+        // Legacy format strings (kept for reference)
         static let wallboxStatusFormat = "Wallbox Status: %@"
         static let chargingPowerFormat = "Charging Power: %d W"
         static let energyTodayFormat = "Energy Today: %d Wh"
@@ -35,9 +53,12 @@ enum AppConstants {
         static let statusComplete = "Charge Complete"
         static let statusUnknown = "Unknown"
         static let loading = "Loading..."
-        static let currentSOCFieldLabel = "Current SOC"
+        static let currentSOCFieldLabel = "Current Battery Level"
         static let currentSOCPercentSuffix = "%"
         static let currentSOCTextFieldPlaceholder = "0"
+        static let calculatedChargeLimitLabel = "Calculated Limit"
+        static let calculatedChargeLimitValueFormat = "%.1f kWh"
+        static let calculatedChargeLimitTargetReached = "Target already reached"
         static let calculatedChargeLimitFormat = "Calculated limit: %.1f kWh (%d Wh)"
         static let calculatedChargeLimitNone = "Calculated limit: none (unlimited on wallbox)"
         static let noChargeLimit = "Energy limit: none (unlimited)"

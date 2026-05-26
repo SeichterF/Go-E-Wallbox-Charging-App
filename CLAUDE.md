@@ -148,10 +148,9 @@ App entry point
 - `WallboxServiceProtocol`, `WallboxService`, `WallboxAPIClient`.
 - `DashboardViewModel`, `SettingsViewModel`.
 - **Feature 1**: Live wallbox status display — `GET /api/status`, `car` state mapping, power and session energy display, auto-refresh on Dashboard open.
+- **Feature 2**: Charge-limit control — `currentSOC` input → `dwo` calculation → `GET /api/set?dwo=...`, debounced wallbox sync on input change.
 
 ### In Progress
-- Feature 2: Charge-limit control (`currentSOC` input → `dwo` calculation → `SET /api/set?dwo=...`).
-  - `updateChargingSettings()` in `WallboxAPIClient` is a placeholder stub — not yet wired to the real SET call.
 - Feature 3: Settings persistence (`@AppStorage`) and validation hardening.
 
 ### Backlog (post-MVP)

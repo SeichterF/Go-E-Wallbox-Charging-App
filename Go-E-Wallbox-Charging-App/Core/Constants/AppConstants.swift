@@ -65,5 +65,10 @@ enum AppConstants {
         static let noChargeLimit = "Energy limit: none (unlimited)"
         static let noChargeLimitValue = "None"
         static let energyLimitWhFormat = "Energy limit: %.1f kWh (%d Wh)"
+
+        // SOC Progress Bar labels
+        static let socProgressNowLabel = "Now"
+        static let socProgressAfterTodayLabel = "After today"
+        static let socProgressTargetLabel = "Target"
     }
 }

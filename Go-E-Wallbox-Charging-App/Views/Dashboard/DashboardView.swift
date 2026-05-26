@@ -3,6 +3,7 @@ import SwiftUI
 struct DashboardView: View {
     @State private var viewModel: DashboardViewModel
     @Environment(\.scenePhase) private var scenePhase
+    @FocusState private var socFieldFocused: Bool
 
     init(viewModel: DashboardViewModel) {
         _viewModel = State(initialValue: viewModel)
@@ -105,40 +106,13 @@ struct DashboardView: View {
                 .font(.headline)
                 .padding(.bottom, 16)
 
-            Divider()
-
-            cardRow(label: AppConstants.UI.targetBatteryLevel) {
-                Text("\(viewModel.targetSOCPercent) \(AppConstants.UI.unitPercent)")
-                    .font(.body.weight(.medium))
-            }
+            socHeroInput
 
             Divider()
+                .padding(.vertical, 16)
 
-            cardRow(label: AppConstants.UI.currentSOCFieldLabel) {
-                HStack(spacing: 4) {
-                    TextField(
-                        AppConstants.UI.currentSOCTextFieldPlaceholder,
-                        text: Binding(
-                            get: { viewModel.currentSOCText },
-                            set: { viewModel.replaceCurrentSOCTextWithSanitizedUserInput($0) }
-                        )
-                    )
-                    .keyboardType(.numberPad)
-                    .textContentType(.none)
-                    .autocorrectionDisabled()
-                    .multilineTextAlignment(.trailing)
-                    .frame(minWidth: 44, idealWidth: 56, maxWidth: 72)
-                    Text(AppConstants.UI.currentSOCPercentSuffix)
-                        .foregroundStyle(.secondary)
-                }
-            }
-
-            Divider()
-
-            cardRow(label: AppConstants.UI.estimatedCurrentSOCLabel) {
-                Text("\(viewModel.calculatedCurrentSOCPercent) \(AppConstants.UI.unitPercent)")
-                    .font(.body.weight(.medium))
-            }
+            socProgressBar
+                .padding(.bottom, 16)
 
             Divider()
 
@@ -151,13 +125,122 @@ struct DashboardView: View {
                     .font(.body.weight(.medium))
                 } else {
                     Text(AppConstants.UI.calculatedChargeLimitTargetReached)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(.green)
                 }
             }
         }
         .padding()
         .background(.background, in: RoundedRectangle(cornerRadius: 16))
         .shadow(color: .black.opacity(0.06), radius: 8, x: 0, y: 2)
+    }
+
+    private var socHeroInput: some View {
+        VStack(spacing: 6) {
+            Text(AppConstants.UI.currentSOCFieldLabel)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+
+            ZStack {
+                HStack(alignment: .lastTextBaseline, spacing: 4) {
+                    Text(viewModel.currentSOCText)
+                        .font(.system(size: 48, weight: .bold, design: .rounded))
+                        .foregroundStyle(socFieldFocused ? Color.accentColor : .primary)
+                    Text(AppConstants.UI.unitPercent)
+                        .font(.title3)
+                        .foregroundStyle(.secondary)
+                }
+                .animation(.easeInOut(duration: 0.15), value: socFieldFocused)
+
+                TextField("", text: Binding(
+                    get: { viewModel.currentSOCText },
+                    set: { viewModel.replaceCurrentSOCTextWithSanitizedUserInput($0) }
+                ))
+                .keyboardType(.numberPad)
+                .textContentType(.none)
+                .autocorrectionDisabled()
+                .focused($socFieldFocused)
+                .opacity(0.001)
+                .frame(maxWidth: .infinity, minHeight: 60)
+            }
+            .frame(maxWidth: .infinity)
+            .contentShape(Rectangle())
+            .onTapGesture { socFieldFocused = true }
+        }
+        .padding(.vertical, 4)
+    }
+
+    private var socProgressBar: some View {
+        let current = viewModel.parsedCurrentSOCPercent
+        let estimated = viewModel.calculatedCurrentSOCPercent
+        let target = viewModel.targetSOCPercent
+        let targetReached = estimated >= target
+
+        return VStack(spacing: 8) {
+            GeometryReader { geo in
+                let w = geo.size.width
+                let currentX = w * CGFloat(current) / 100.0
+                let estimatedX = w * CGFloat(min(estimated, 100)) / 100.0
+                let targetX = w * CGFloat(min(target, 100)) / 100.0
+
+                ZStack(alignment: .leading) {
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(Color.secondary.opacity(0.15))
+                        .frame(height: 8)
+
+                    if !targetReached && estimatedX > 0 {
+                        RoundedRectangle(cornerRadius: 4)
+                            .fill(Color.blue.opacity(0.45))
+                            .frame(width: estimatedX, height: 8)
+                    }
+
+                    if currentX > 0 {
+                        RoundedRectangle(cornerRadius: 4)
+                            .fill(Color.green)
+                            .frame(width: max(8, currentX), height: 8)
+                    }
+
+                    Circle()
+                        .stroke(targetReached ? Color.green : Color.secondary.opacity(0.5), lineWidth: 1.5)
+                        .background(Circle().fill(Color(.systemBackground)))
+                        .frame(width: 12, height: 12)
+                        .offset(x: targetX - 6, y: -2)
+                }
+            }
+            .frame(height: 12)
+
+            HStack(alignment: .top) {
+                VStack(alignment: .leading, spacing: 1) {
+                    Text("\(current) \(AppConstants.UI.unitPercent)")
+                        .font(.caption2.weight(.semibold))
+                    Text(AppConstants.UI.socProgressNowLabel)
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                }
+
+                if estimated > current && !targetReached {
+                    Spacer()
+                    VStack(alignment: .center, spacing: 1) {
+                        Text("~\(estimated) \(AppConstants.UI.unitPercent)")
+                            .font(.caption2.weight(.semibold))
+                            .foregroundStyle(.blue.opacity(0.8))
+                        Text(AppConstants.UI.socProgressAfterTodayLabel)
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+
+                Spacer()
+
+                VStack(alignment: .trailing, spacing: 1) {
+                    Text("\(target) \(AppConstants.UI.unitPercent)")
+                        .font(.caption2.weight(.semibold))
+                        .foregroundStyle(targetReached ? .green : .primary)
+                    Text(AppConstants.UI.socProgressTargetLabel)
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                }
+            }
+        }
     }
 
     @ViewBuilder

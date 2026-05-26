@@ -15,7 +15,7 @@ struct DashboardView: View {
                 ChargingCardView(status: viewModel.status)
 
                 VStack(alignment: .leading, spacing: 12) {
-                    Text(String(format: AppConstants.UI.targetSOCFormat, viewModel.targetSOCPercent))
+                    Text("\(AppConstants.UI.targetBatteryLevel): \(viewModel.targetSOCPercent) \(AppConstants.UI.unitPercent)")
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
 

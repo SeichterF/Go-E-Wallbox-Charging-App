@@ -3,6 +3,7 @@ import SwiftUI
 struct DashboardView: View {
     @State private var viewModel: DashboardViewModel
     @Environment(\.scenePhase) private var scenePhase
+    @FocusState private var socFieldFocused: Bool
 
     init(viewModel: DashboardViewModel) {
         _viewModel = State(initialValue: viewModel)
@@ -128,6 +129,15 @@ struct DashboardView: View {
                     .autocorrectionDisabled()
                     .multilineTextAlignment(.trailing)
                     .frame(minWidth: 44, idealWidth: 56, maxWidth: 72)
+                    .focused($socFieldFocused)
+                    .toolbar {
+                        ToolbarItemGroup(placement: .keyboard) {
+                            Spacer()
+                            Button(AppConstants.UI.done) {
+                                socFieldFocused = false
+                            }
+                        }
+                    }
                     Text(AppConstants.UI.currentSOCPercentSuffix)
                         .foregroundStyle(.secondary)
                 }

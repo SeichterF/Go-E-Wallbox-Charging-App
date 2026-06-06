@@ -25,6 +25,7 @@ struct DashboardView: View {
                 }
                 .padding()
             }
+            .scrollDismissesKeyboard(.interactively)
             .background(Color(.systemGroupedBackground))
             .navigationTitle(AppConstants.UI.dashboardTitle)
             .task(id: scenePhase == .active) {
@@ -161,6 +162,14 @@ struct DashboardView: View {
                 .focused($socFieldFocused)
                 .opacity(0.001)
                 .frame(maxWidth: .infinity, minHeight: 60)
+                .toolbar {
+                    ToolbarItemGroup(placement: .keyboard) {
+                        Spacer()
+                        Button(AppConstants.UI.done) {
+                            socFieldFocused = false
+                        }
+                    }
+                }
             }
             .frame(maxWidth: .infinity)
             .contentShape(Rectangle())

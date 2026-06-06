@@ -5,6 +5,7 @@ enum AppConstants {
         static let dashboardTitle = "Overview"
         static let settingsTitle = "Settings"
         static let save = "Save"
+        static let done = "Done"
         // Settings – section headers
         static let settingsSectionConnection = "Connection"
         static let settingsSectionBattery = "Battery"

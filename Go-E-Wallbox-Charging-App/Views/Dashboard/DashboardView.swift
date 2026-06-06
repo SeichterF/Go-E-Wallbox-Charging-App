@@ -143,9 +143,13 @@ struct DashboardView: View {
 
             ZStack {
                 HStack(alignment: .lastTextBaseline, spacing: 4) {
-                    Text(viewModel.currentSOCText)
+                    Text(viewModel.currentSOCText.isEmpty ? "0" : viewModel.currentSOCText)
                         .font(.system(size: 48, weight: .bold, design: .rounded))
-                        .foregroundStyle(viewModel.socValidationError != nil ? Color.red : (socFieldFocused ? Color.accentColor : .primary))
+                        .foregroundStyle(
+                            viewModel.socValidationError != nil ? Color.red :
+                            viewModel.socFieldIsCleared ? Color.secondary.opacity(0.3) :
+                            socFieldFocused ? Color.accentColor : .primary
+                        )
                     Text(AppConstants.UI.unitPercent)
                         .font(.title3)
                         .foregroundStyle(.secondary)
@@ -175,6 +179,9 @@ struct DashboardView: View {
             .frame(maxWidth: .infinity)
             .contentShape(Rectangle())
             .onTapGesture { socFieldFocused = true }
+            .onChange(of: socFieldFocused) { _, focused in
+                if focused { viewModel.beginEditing() } else { viewModel.endEditing() }
+            }
 
             if let error = viewModel.socValidationError {
                 Text(error)

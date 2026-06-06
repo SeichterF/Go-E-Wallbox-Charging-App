@@ -15,7 +15,10 @@ final class DashboardViewModel {
 
     /// Digits-only display for current SOC; default `"0"` (0%).
     var currentSOCText: String = "0"
+    /// True while the field is empty because the user just tapped in to overwrite.
+    var socFieldIsCleared = false
 
+    private var socTextBeforeEditing = "0"
     private var wallboxSyncTask: Task<Void, Never>?
     private var lastSyncedSOC: Int?
     private var lastSyncedLimitWh: Int?
@@ -87,12 +90,26 @@ final class DashboardViewModel {
         isLoading = false
     }
 
+    func beginEditing() {
+        socTextBeforeEditing = currentSOCText
+        currentSOCText = ""
+        socFieldIsCleared = true
+    }
+
+    func endEditing() {
+        if currentSOCText.isEmpty {
+            currentSOCText = socTextBeforeEditing
+        }
+        socFieldIsCleared = false
+    }
+
     /// Strips non-digits, stores raw value (no clamping), and syncs only when valid.
     func replaceCurrentSOCTextWithSanitizedUserInput(_ raw: String) {
         let digits = raw.filter(\.isNumber)
-        currentSOCText = digits.isEmpty ? "0" : String(Int(digits) ?? 0)
+        currentSOCText = digits.isEmpty ? "" : String(Int(digits) ?? 0)
+        socFieldIsCleared = currentSOCText.isEmpty
 
-        if socValidationError == nil {
+        if !currentSOCText.isEmpty && socValidationError == nil {
             scheduleDebouncedWallboxSync()
         }
     }

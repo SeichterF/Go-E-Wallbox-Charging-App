@@ -25,6 +25,7 @@ struct DashboardView: View {
                 }
                 .padding()
             }
+            .scrollDismissesKeyboard(.interactively)
             .background(Color(.systemGroupedBackground))
             .navigationTitle(AppConstants.UI.dashboardTitle)
             .task(id: scenePhase == .active) {

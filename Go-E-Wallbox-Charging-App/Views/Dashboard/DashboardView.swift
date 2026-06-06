@@ -145,12 +145,13 @@ struct DashboardView: View {
                 HStack(alignment: .lastTextBaseline, spacing: 4) {
                     Text(viewModel.currentSOCText)
                         .font(.system(size: 48, weight: .bold, design: .rounded))
-                        .foregroundStyle(socFieldFocused ? Color.accentColor : .primary)
+                        .foregroundStyle(viewModel.socValidationError != nil ? Color.red : (socFieldFocused ? Color.accentColor : .primary))
                     Text(AppConstants.UI.unitPercent)
                         .font(.title3)
                         .foregroundStyle(.secondary)
                 }
                 .animation(.easeInOut(duration: 0.15), value: socFieldFocused)
+                .animation(.easeInOut(duration: 0.15), value: viewModel.socValidationError != nil)
 
                 TextField("", text: Binding(
                     get: { viewModel.currentSOCText },
@@ -174,8 +175,16 @@ struct DashboardView: View {
             .frame(maxWidth: .infinity)
             .contentShape(Rectangle())
             .onTapGesture { socFieldFocused = true }
+
+            if let error = viewModel.socValidationError {
+                Text(error)
+                    .font(.caption)
+                    .foregroundStyle(.red)
+                    .transition(.opacity.combined(with: .move(edge: .top)))
+            }
         }
         .padding(.vertical, 4)
+        .animation(.easeInOut(duration: 0.2), value: viewModel.socValidationError != nil)
     }
 
     private var socProgressBar: some View {

@@ -29,11 +29,15 @@ final class DashboardViewModel {
         settings.targetSOCPercent
     }
 
+    var socValidationError: String? {
+        let digits = currentSOCText.filter(\.isNumber)
+        guard !digits.isEmpty, let value = Int(digits) else { return nil }
+        return value > 100 ? AppConstants.UI.socValidationErrorMax : nil
+    }
+
     var parsedCurrentSOCPercent: Int {
         let digits = currentSOCText.filter(\.isNumber)
-        guard !digits.isEmpty else {
-            return 0
-        }
+        guard !digits.isEmpty else { return 0 }
         return min(100, Int(digits) ?? 0)
     }
 
@@ -83,18 +87,14 @@ final class DashboardViewModel {
         isLoading = false
     }
 
-    /// Sanitizes to digits only, clamps to 0…100, then schedules a debounced wallbox sync.
+    /// Strips non-digits, stores raw value (no clamping), and syncs only when valid.
     func replaceCurrentSOCTextWithSanitizedUserInput(_ raw: String) {
         let digits = raw.filter(\.isNumber)
-        if digits.isEmpty {
-            currentSOCText = "0"
-        } else if let value = Int(digits) {
-            currentSOCText = String(min(100, value))
-        } else {
-            currentSOCText = "0"
-        }
+        currentSOCText = digits.isEmpty ? "0" : digits
 
-        scheduleDebouncedWallboxSync()
+        if socValidationError == nil {
+            scheduleDebouncedWallboxSync()
+        }
     }
 
     func scheduleDebouncedWallboxSync() {

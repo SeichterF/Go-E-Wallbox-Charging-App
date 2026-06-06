@@ -90,7 +90,7 @@ final class DashboardViewModel {
     /// Strips non-digits, stores raw value (no clamping), and syncs only when valid.
     func replaceCurrentSOCTextWithSanitizedUserInput(_ raw: String) {
         let digits = raw.filter(\.isNumber)
-        currentSOCText = digits.isEmpty ? "0" : digits
+        currentSOCText = digits.isEmpty ? "0" : String(Int(digits) ?? 0)
 
         if socValidationError == nil {
             scheduleDebouncedWallboxSync()

@@ -56,9 +56,9 @@ struct DashboardView: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
                 HStack(alignment: .lastTextBaseline, spacing: 4) {
-                    Text("\(viewModel.status.chargingPowerW)")
+                    Text(String(format: "%.1f", Double(viewModel.status.chargingPowerW) / 1000.0))
                         .font(.system(size: 48, weight: .bold, design: .rounded))
-                    Text(AppConstants.UI.unitWatt)
+                    Text(AppConstants.UI.unitKW)
                         .font(.title3)
                         .foregroundStyle(.secondary)
                 }
@@ -70,9 +70,9 @@ struct DashboardView: View {
                         .font(.caption)
                         .foregroundStyle(.secondary)
                     HStack(alignment: .lastTextBaseline, spacing: 4) {
-                        Text("\(viewModel.status.energyPerDayWh)")
+                        Text(String(format: "%.1f", Double(viewModel.status.energyPerDayWh) / 1000.0))
                             .font(.title3.weight(.semibold))
-                        Text(AppConstants.UI.unitWh)
+                        Text(AppConstants.UI.unitKWh)
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }

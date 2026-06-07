@@ -24,8 +24,8 @@ struct WallboxAPIClient {
         }
 
         let carStatusValue = intValue(from: jsonObject["car"]) ?? 0
-        let powerKwFromNRG = powerFromEnergyArray(jsonObject["nrg"])
-        let chargingPowerW = Int((powerKwFromNRG * 1000.0).rounded())
+        let powerWFromNRG = powerFromEnergyArray(jsonObject["nrg"])
+        let chargingPowerW = Int(powerWFromNRG.rounded())
         let sessionEnergyWh = intValue(from: jsonObject["wh"]) ?? 0
         let chargeLimitWh = intValue(from: jsonObject["dwo"]) ?? 0
 
@@ -74,7 +74,7 @@ struct WallboxAPIClient {
         }
     }
 
-    private func powerFromEnergyArray(_ nrgValue: Any?) -> Double {
+    private func powerFromEnergyArray(_ nrgValue: Any?) -> Double { // nrg[11] is total power in W
         guard let nrgArray = nrgValue as? [Any], nrgArray.count > 11 else {
             return 0
         }

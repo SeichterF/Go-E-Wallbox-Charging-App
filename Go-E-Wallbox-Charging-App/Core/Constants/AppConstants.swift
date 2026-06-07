@@ -71,5 +71,8 @@ enum AppConstants {
         static let socProgressNowLabel = "Now"
         static let socProgressAfterTodayLabel = "After today"
         static let socProgressTargetLabel = "Target"
+
+        // SOC input validation
+        static let socValidationErrorMax = "Maximum is 100 %"
     }
 }

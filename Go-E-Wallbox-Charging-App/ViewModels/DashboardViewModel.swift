@@ -15,7 +15,10 @@ final class DashboardViewModel {
 
     /// Digits-only display for current SOC; default `"0"` (0%).
     var currentSOCText: String = "0"
+    /// True while the field is empty because the user just tapped in to overwrite.
+    var socFieldIsCleared = false
 
+    private var socTextBeforeEditing = "0"
     private var wallboxSyncTask: Task<Void, Never>?
     private var lastSyncedSOC: Int?
     private var lastSyncedLimitWh: Int?
@@ -29,11 +32,15 @@ final class DashboardViewModel {
         settings.targetSOCPercent
     }
 
+    var socValidationError: String? {
+        let digits = currentSOCText.filter(\.isNumber)
+        guard !digits.isEmpty, let value = Int(digits) else { return nil }
+        return value > 100 ? AppConstants.UI.socValidationErrorMax : nil
+    }
+
     var parsedCurrentSOCPercent: Int {
         let digits = currentSOCText.filter(\.isNumber)
-        guard !digits.isEmpty else {
-            return 0
-        }
+        guard !digits.isEmpty else { return 0 }
         return min(100, Int(digits) ?? 0)
     }
 
@@ -83,18 +90,28 @@ final class DashboardViewModel {
         isLoading = false
     }
 
-    /// Sanitizes to digits only, clamps to 0…100, then schedules a debounced wallbox sync.
+    func beginEditing() {
+        socTextBeforeEditing = currentSOCText
+        currentSOCText = ""
+        socFieldIsCleared = true
+    }
+
+    func endEditing() {
+        if currentSOCText.isEmpty {
+            currentSOCText = socTextBeforeEditing
+        }
+        socFieldIsCleared = false
+    }
+
+    /// Strips non-digits, stores raw value (no clamping), and syncs only when valid.
     func replaceCurrentSOCTextWithSanitizedUserInput(_ raw: String) {
         let digits = raw.filter(\.isNumber)
-        if digits.isEmpty {
-            currentSOCText = "0"
-        } else if let value = Int(digits) {
-            currentSOCText = String(min(100, value))
-        } else {
-            currentSOCText = "0"
-        }
+        currentSOCText = digits.isEmpty ? "" : String(Int(digits) ?? 0)
+        socFieldIsCleared = currentSOCText.isEmpty
 
-        scheduleDebouncedWallboxSync()
+        if !currentSOCText.isEmpty && socValidationError == nil {
+            scheduleDebouncedWallboxSync()
+        }
     }
 
     func scheduleDebouncedWallboxSync() {

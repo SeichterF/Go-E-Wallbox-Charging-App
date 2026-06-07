@@ -56,7 +56,7 @@ struct DashboardView: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
                 HStack(alignment: .lastTextBaseline, spacing: 4) {
-                    Text(String(format: "%.1f", Double(viewModel.status.chargingPowerW) / 1000.0))
+                    Text(String(format: "%.3f", Double(viewModel.status.chargingPowerW) / 1000.0))
                         .font(.system(size: 48, weight: .bold, design: .rounded))
                     Text(AppConstants.UI.unitKW)
                         .font(.title3)

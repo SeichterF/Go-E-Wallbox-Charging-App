@@ -35,8 +35,7 @@ enum AppConstants {
         static let dashboardEnergyLimitLabel = "Energy Limit"
 
         // Dashboard – units
-        static let unitWatt = "W"
-        static let unitWh = "Wh"
+        static let unitKW = "kW"
 
         // Dashboard – formatted values
         static let dashboardEnergyLimitValueFormat = "%.1f kWh"

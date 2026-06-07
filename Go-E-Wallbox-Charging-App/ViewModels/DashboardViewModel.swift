@@ -22,6 +22,7 @@ final class DashboardViewModel {
     private var wallboxSyncTask: Task<Void, Never>?
     private var lastSyncedSOC: Int?
     private var lastSyncedLimitWh: Int?
+    private var needsInitializationFromWallbox = true
 
     init(service: WallboxServiceProtocol, settings: AppSettings) {
         self.service = service
@@ -66,6 +67,7 @@ final class DashboardViewModel {
     }
 
     func startPolling() async {
+        needsInitializationFromWallbox = true
         while !Task.isCancelled {
             await refreshStatus()
             guard !Task.isCancelled else { break }
@@ -83,6 +85,10 @@ final class DashboardViewModel {
 
         do {
             status = try await service.fetchStatus()
+            if needsInitializationFromWallbox {
+                initializeSOCFromWallbox()
+                needsInitializationFromWallbox = false
+            }
         } catch {
             errorMessage = error.localizedDescription
         }
@@ -129,6 +135,21 @@ final class DashboardViewModel {
 
             await synchronizeChargeLimitWithWallbox()
         }
+    }
+
+    private func initializeSOCFromWallbox() {
+        let limitWh = status.chargeLimitWh
+        guard limitWh > 0,
+              settings.batterySizeKWh > 0,
+              settings.chargingEnergyFactor > 0 else { return }
+
+        let implied = settings.targetSOCPercent
+            - Int((Double(limitWh) * 100.0
+                / (settings.batterySizeKWh * 1000.0 * settings.chargingEnergyFactor)).rounded())
+        let clamped = max(0, min(100, implied))
+        currentSOCText = String(clamped)
+        lastSyncedSOC = clamped
+        lastSyncedLimitWh = limitWh
     }
 
     func synchronizeChargeLimitWithWallbox() async {

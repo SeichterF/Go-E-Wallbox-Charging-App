@@ -1,6 +1,75 @@
-"dashboard_title" = "Dashboard";
+/* General */
+"dashboard_title" = "Overview";
 "settings_title" = "Settings";
-"refresh_button" = "Refresh";
-"save_button" = "Save";
-"connected_status" = "Connected";
-"disconnected_status" = "Disconnected";
+"save" = "Save";
+"done" = "Done";
+
+/* Settings – section headers */
+"settings_section_connection" = "Connection";
+"settings_section_battery" = "Battery";
+"settings_section_charging" = "Charging";
+
+/* Settings – field labels */
+"wallbox_ip" = "Wallbox IP";
+"battery_size_kwh" = "Battery Size";
+"target_battery_level" = "Target Battery Level";
+"charging_energy_factor" = "Energy Factor";
+
+/* Settings – footer descriptions */
+"battery_size_footer" = "Total usable capacity of your EV battery.";
+"charging_energy_factor_footer" = "Accounts for charging losses. 0.85 means the car requires ~18 % more energy than its net SOC gain.";
+
+/* Units */
+"unit_kwh" = "kWh";
+"unit_kw" = "kW";
+"unit_percent" = "%";
+
+/* Dashboard – section headers */
+"dashboard_section_status" = "Status";
+"dashboard_section_charge_limit" = "Charge Limit";
+
+/* Dashboard – field labels */
+"dashboard_status_label" = "Connection";
+"dashboard_charging_power_label" = "Charging Power";
+"dashboard_energy_today_label" = "Energy Today";
+"dashboard_energy_limit_label" = "Energy Limit";
+
+/* Dashboard – formatted values */
+"dashboard_energy_limit_value_format" = "%.1f kWh";
+
+/* Connection status */
+"connected" = "Connected";
+"disconnected" = "Disconnected";
+"status_disconnected" = "Disconnected";
+"status_idle" = "Plugged In (Idle)";
+"status_charging" = "Charging";
+"status_waiting" = "Waiting";
+"status_complete" = "Charge Complete";
+"status_unknown" = "Unknown";
+"loading" = "Loading...";
+
+/* Charge limit */
+"current_soc_field_label" = "Current Battery Level";
+"current_soc_placeholder" = "0";
+"estimated_current_soc_label" = "Estimated Current Level";
+"calculated_charge_limit_label" = "Calculated Limit";
+"calculated_charge_limit_value_format" = "%.1f kWh";
+"calculated_charge_limit_target_reached" = "Target already reached";
+"calculated_charge_limit_format" = "Calculated limit: %.1f kWh (%d Wh)";
+"calculated_charge_limit_none" = "Calculated limit: none (unlimited on wallbox)";
+"no_charge_limit" = "Energy limit: none (unlimited)";
+"no_charge_limit_value" = "None";
+"energy_limit_wh_format" = "Energy limit: %.1f kWh (%d Wh)";
+
+/* Legacy format strings */
+"wallbox_status_format" = "Wallbox Status: %@";
+"charging_power_format" = "Charging Power: %d W";
+"energy_today_format" = "Energy Today: %d Wh";
+
+/* SOC Progress Bar */
+"soc_progress_now_label" = "Now";
+"soc_progress_after_today_label" = "After today";
+"soc_progress_target_label" = "Target";
+
+/* Validation */
+"soc_validation_error_max" = "Maximum is 100 %";

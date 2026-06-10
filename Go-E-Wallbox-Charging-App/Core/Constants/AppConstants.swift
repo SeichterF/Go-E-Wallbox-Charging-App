@@ -2,76 +2,77 @@ import Foundation
 
 enum AppConstants {
     enum UI {
-        static let dashboardTitle = "Overview"
-        static let settingsTitle = "Settings"
-        static let save = "Save"
-        static let done = "Done"
+        static let dashboardTitle = String(localized: "dashboard_title")
+        static let settingsTitle = String(localized: "settings_title")
+        static let save = String(localized: "save")
+        static let done = String(localized: "done")
         // Settings – section headers
-        static let settingsSectionConnection = "Connection"
-        static let settingsSectionBattery = "Battery"
-        static let settingsSectionCharging = "Charging"
+        static let settingsSectionConnection = String(localized: "settings_section_connection")
+        static let settingsSectionBattery = String(localized: "settings_section_battery")
+        static let settingsSectionCharging = String(localized: "settings_section_charging")
 
         // Settings – field labels
-        static let wallboxIP = "Wallbox IP"
-        static let batterySizeKWh = "Battery Size"
-        static let targetBatteryLevel = "Target Battery Level"
-        static let chargingEnergyFactor = "Energy Factor"
+        static let wallboxIP = String(localized: "wallbox_ip")
+        static let batterySizeKWh = String(localized: "battery_size_kwh")
+        static let targetBatteryLevel = String(localized: "target_battery_level")
+        static let chargingEnergyFactor = String(localized: "charging_energy_factor")
 
         // Settings – units
-        static let unitKWh = "kWh"
-        static let unitPercent = "%"
+        static let unitKWh = String(localized: "unit_kwh")
+        static let unitPercent = String(localized: "unit_percent")
 
         // Settings – footer descriptions
-        static let batterySizeFooter = "Total usable capacity of your EV battery."
-        static let chargingEnergyFactorFooter = "Accounts for charging losses. 0.85 means the car requires ~18 % more energy than its net SOC gain."
+        static let batterySizeFooter = String(localized: "battery_size_footer")
+        static let chargingEnergyFactorFooter = String(localized: "charging_energy_factor_footer")
+
         // Dashboard – section headers
-        static let dashboardSectionStatus = "Status"
-        static let dashboardSectionChargeLimit = "Charge Limit"
+        static let dashboardSectionStatus = String(localized: "dashboard_section_status")
+        static let dashboardSectionChargeLimit = String(localized: "dashboard_section_charge_limit")
 
         // Dashboard – field labels
-        static let dashboardStatusLabel = "Connection"
-        static let dashboardChargingPowerLabel = "Charging Power"
-        static let dashboardEnergyTodayLabel = "Energy Today"
-        static let dashboardEnergyLimitLabel = "Energy Limit"
+        static let dashboardStatusLabel = String(localized: "dashboard_status_label")
+        static let dashboardChargingPowerLabel = String(localized: "dashboard_charging_power_label")
+        static let dashboardEnergyTodayLabel = String(localized: "dashboard_energy_today_label")
+        static let dashboardEnergyLimitLabel = String(localized: "dashboard_energy_limit_label")
 
         // Dashboard – units
-        static let unitKW = "kW"
+        static let unitKW = String(localized: "unit_kw")
 
         // Dashboard – formatted values
-        static let dashboardEnergyLimitValueFormat = "%.1f kWh"
+        static let dashboardEnergyLimitValueFormat = String(localized: "dashboard_energy_limit_value_format")
 
         // Legacy format strings (kept for reference)
-        static let wallboxStatusFormat = "Wallbox Status: %@"
-        static let chargingPowerFormat = "Charging Power: %d W"
-        static let energyTodayFormat = "Energy Today: %d Wh"
-        static let connected = "Connected"
-        static let disconnected = "Disconnected"
-        static let statusDisconnected = "Disconnected"
-        static let statusIdle = "Plugged In (Idle)"
-        static let statusCharging = "Charging"
-        static let statusWaiting = "Waiting"
-        static let statusComplete = "Charge Complete"
-        static let statusUnknown = "Unknown"
-        static let loading = "Loading..."
-        static let currentSOCFieldLabel = "Current Battery Level"
-        static let currentSOCPercentSuffix = "%"
-        static let currentSOCTextFieldPlaceholder = "0"
-        static let estimatedCurrentSOCLabel = "Estimated Current Level"
-        static let calculatedChargeLimitLabel = "Calculated Limit"
-        static let calculatedChargeLimitValueFormat = "%.1f kWh"
-        static let calculatedChargeLimitTargetReached = "Target already reached"
-        static let calculatedChargeLimitFormat = "Calculated limit: %.1f kWh (%d Wh)"
-        static let calculatedChargeLimitNone = "Calculated limit: none (unlimited on wallbox)"
-        static let noChargeLimit = "Energy limit: none (unlimited)"
-        static let noChargeLimitValue = "None"
-        static let energyLimitWhFormat = "Energy limit: %.1f kWh (%d Wh)"
+        static let wallboxStatusFormat = String(localized: "wallbox_status_format")
+        static let chargingPowerFormat = String(localized: "charging_power_format")
+        static let energyTodayFormat = String(localized: "energy_today_format")
+        static let connected = String(localized: "connected")
+        static let disconnected = String(localized: "disconnected")
+        static let statusDisconnected = String(localized: "status_disconnected")
+        static let statusIdle = String(localized: "status_idle")
+        static let statusCharging = String(localized: "status_charging")
+        static let statusWaiting = String(localized: "status_waiting")
+        static let statusComplete = String(localized: "status_complete")
+        static let statusUnknown = String(localized: "status_unknown")
+        static let loading = String(localized: "loading")
+        static let currentSOCFieldLabel = String(localized: "current_soc_field_label")
+        static let currentSOCPercentSuffix = String(localized: "unit_percent")
+        static let currentSOCTextFieldPlaceholder = String(localized: "current_soc_placeholder")
+        static let estimatedCurrentSOCLabel = String(localized: "estimated_current_soc_label")
+        static let calculatedChargeLimitLabel = String(localized: "calculated_charge_limit_label")
+        static let calculatedChargeLimitValueFormat = String(localized: "calculated_charge_limit_value_format")
+        static let calculatedChargeLimitTargetReached = String(localized: "calculated_charge_limit_target_reached")
+        static let calculatedChargeLimitFormat = String(localized: "calculated_charge_limit_format")
+        static let calculatedChargeLimitNone = String(localized: "calculated_charge_limit_none")
+        static let noChargeLimit = String(localized: "no_charge_limit")
+        static let noChargeLimitValue = String(localized: "no_charge_limit_value")
+        static let energyLimitWhFormat = String(localized: "energy_limit_wh_format")
 
         // SOC Progress Bar labels
-        static let socProgressNowLabel = "Now"
-        static let socProgressAfterTodayLabel = "After today"
-        static let socProgressTargetLabel = "Target"
+        static let socProgressNowLabel = String(localized: "soc_progress_now_label")
+        static let socProgressAfterTodayLabel = String(localized: "soc_progress_after_today_label")
+        static let socProgressTargetLabel = String(localized: "soc_progress_target_label")
 
         // SOC input validation
-        static let socValidationErrorMax = "Maximum is 100 %"
+        static let socValidationErrorMax = String(localized: "soc_validation_error_max")
     }
 }

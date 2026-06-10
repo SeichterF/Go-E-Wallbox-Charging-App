@@ -3,6 +3,9 @@ import SwiftUI
 struct SettingsView: View {
     @State private var viewModel: SettingsViewModel
 
+    private enum Field { case ip, batterySize, targetSOC, chargingFactor }
+    @FocusState private var focusedField: Field?
+
     init(viewModel: SettingsViewModel) {
         _viewModel = State(initialValue: viewModel)
     }
@@ -16,6 +19,7 @@ struct SettingsView: View {
                             .textInputAutocapitalization(.never)
                             .autocorrectionDisabled()
                             .multilineTextAlignment(.trailing)
+                            .focused($focusedField, equals: .ip)
                     }
                 }
 
@@ -28,6 +32,7 @@ struct SettingsView: View {
                             TextField("42", value: $viewModel.batterySizeKWh, format: .number)
                                 .keyboardType(.decimalPad)
                                 .multilineTextAlignment(.trailing)
+                                .focused($focusedField, equals: .batterySize)
                             Text(AppConstants.UI.unitKWh)
                                 .foregroundStyle(.secondary)
                         }
@@ -38,6 +43,7 @@ struct SettingsView: View {
                             TextField("80", value: $viewModel.targetSOCPercent, format: .number)
                                 .keyboardType(.numberPad)
                                 .multilineTextAlignment(.trailing)
+                                .focused($focusedField, equals: .targetSOC)
                             Text(AppConstants.UI.unitPercent)
                                 .foregroundStyle(.secondary)
                         }
@@ -52,11 +58,21 @@ struct SettingsView: View {
                         TextField("0.85", value: $viewModel.chargingEnergyFactor, format: .number)
                             .keyboardType(.decimalPad)
                             .multilineTextAlignment(.trailing)
+                            .focused($focusedField, equals: .chargingFactor)
                     }
                 }
 
             }
+            .scrollDismissesKeyboard(.interactively)
             .navigationTitle(AppConstants.UI.settingsTitle)
+            .toolbar {
+                ToolbarItemGroup(placement: .keyboard) {
+                    Spacer()
+                    Button(AppConstants.UI.done) {
+                        focusedField = nil
+                    }
+                }
+            }
         }
     }
 }

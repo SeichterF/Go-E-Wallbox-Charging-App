@@ -1,0 +1,75 @@
+/* General */
+"dashboard_title" = "Übersicht";
+"settings_title" = "Einstellungen";
+"save" = "Speichern";
+"done" = "Fertig";
+
+/* Settings – section headers */
+"settings_section_connection" = "Verbindung";
+"settings_section_battery" = "Batterie";
+"settings_section_charging" = "Laden";
+
+/* Settings – field labels */
+"wallbox_ip" = "Wallbox IP";
+"battery_size_kwh" = "Batteriegröße";
+"target_battery_level" = "Ziel-Ladestand";
+"charging_energy_factor" = "Energiefaktor";
+
+/* Settings – footer descriptions */
+"battery_size_footer" = "Gesamte nutzbare Kapazität deiner Fahrzeugbatterie.";
+"charging_energy_factor_footer" = "Berücksichtigt Ladeverluste. 0,85 bedeutet, dass das Fahrzeug ~18 % mehr Energie benötigt als der Netto-Ladegewinn.";
+
+/* Units */
+"unit_kwh" = "kWh";
+"unit_kw" = "kW";
+"unit_percent" = "%";
+
+/* Dashboard – section headers */
+"dashboard_section_status" = "Status";
+"dashboard_section_charge_limit" = "Ladelimit";
+
+/* Dashboard – field labels */
+"dashboard_status_label" = "Verbindung";
+"dashboard_charging_power_label" = "Ladeleistung";
+"dashboard_energy_today_label" = "Energie heute";
+"dashboard_energy_limit_label" = "Energielimit";
+
+/* Dashboard – formatted values */
+"dashboard_energy_limit_value_format" = "%.1f kWh";
+
+/* Connection status */
+"connected" = "Verbunden";
+"disconnected" = "Nicht verbunden";
+"status_disconnected" = "Nicht verbunden";
+"status_idle" = "Eingesteckt (Bereit)";
+"status_charging" = "Lädt";
+"status_waiting" = "Wartet";
+"status_complete" = "Vollgeladen";
+"status_unknown" = "Unbekannt";
+"loading" = "Lädt...";
+
+/* Charge limit */
+"current_soc_field_label" = "Aktueller Ladestand";
+"current_soc_placeholder" = "0";
+"estimated_current_soc_label" = "Geschätzter Ladestand";
+"calculated_charge_limit_label" = "Berechnetes Limit";
+"calculated_charge_limit_value_format" = "%.1f kWh";
+"calculated_charge_limit_target_reached" = "Ziel bereits erreicht";
+"calculated_charge_limit_format" = "Berechnetes Limit: %.1f kWh (%d Wh)";
+"calculated_charge_limit_none" = "Berechnetes Limit: keins (unbegrenzt an der Wallbox)";
+"no_charge_limit" = "Energielimit: keins (unbegrenzt)";
+"no_charge_limit_value" = "Keins";
+"energy_limit_wh_format" = "Energielimit: %.1f kWh (%d Wh)";
+
+/* Legacy format strings */
+"wallbox_status_format" = "Wallbox-Status: %@";
+"charging_power_format" = "Ladeleistung: %d W";
+"energy_today_format" = "Energie heute: %d Wh";
+
+/* SOC Progress Bar */
+"soc_progress_now_label" = "Jetzt";
+"soc_progress_after_today_label" = "Nach heute";
+"soc_progress_target_label" = "Ziel";
+
+/* Validation */
+"soc_validation_error_max" = "Maximum ist 100 %";

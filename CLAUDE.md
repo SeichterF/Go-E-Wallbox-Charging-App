@@ -88,9 +88,32 @@ App entry point
 - No `try?` — explicit error handling always.
 - No `DispatchQueue` — async/await throughout.
 - No hardcoded IP addresses or numeric constants — all go through `AppSettings`.
-- All UI strings live in `AppConstants.UI` — never hardcode strings in Views.
+- All UI strings live in `AppConstants.UI` — never hardcode strings in Views. See **Localization** section below for the full three-step process.
 - Every ViewModel exposes `isLoading: Bool` and `errorMessage: String?`.
 - Error states must be surfaced to the UI — never fail silently.
+
+---
+
+## Localization
+
+The app supports English and German based on the device language. All UI strings flow through `AppConstants.UI`, which uses `String(localized:)` to look up values at runtime.
+
+**When adding a new string, always update all three places:**
+
+1. Add a `static let` in `Core/Constants/AppConstants.swift`:
+   ```swift
+   static let myNewLabel = String(localized: "my_new_label")
+   ```
+2. Add the key + English value to `Resources/Localization/en.lproj/Localizable.strings`:
+   ```
+   "my_new_label" = "My New Label";
+   ```
+3. Add the key + German value to `Resources/Localization/de.lproj/Localizable.strings`:
+   ```
+   "my_new_label" = "Meine neue Bezeichnung";
+   ```
+
+Missing a `.strings` entry causes the key itself to be shown at runtime — always add both languages.
 
 ---
 

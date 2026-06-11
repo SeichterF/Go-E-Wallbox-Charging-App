@@ -119,17 +119,17 @@ Missing a `.strings` entry causes the key itself to be shown at runtime — alwa
 
 ## AppSettings
 
-`AppSettings` is `@Observable` (in-memory). Key properties:
+`AppSettings` is `@Observable`. Key properties:
 
 | Property | Type | Default |
 |---|---|---|
 | `chargerIP` | `String` | `"192.168.178.69"` |
-| `batterySizeKWh` | `Double` | `60.0` |
+| `batterySizeKWh` | `Double` | `42.0` |
 | `targetSOCPercent` | `Int` | `80` |
-| `chargingLossFactor` | `Double` | `1.10` |
+| `chargingEnergyFactor` | `Double` | `0.85` |
 | `pollingIntervalSeconds` | `TimeInterval` | `15.0` |
 
-> **Note:** Persistence via `@AppStorage` is planned (Feature 3) but not yet implemented. Settings reset on app restart.
+Settings persist via `UserDefaults`: each mutable property is loaded in `init` (falling back to its default) and written back in `didSet`. The `UserDefaults` instance is injectable (`init(defaults: UserDefaults = .standard)`) so tests use an isolated suite. `@AppStorage` is deliberately not used — it does not work inside `@Observable` classes without breaking observation.
 
 ---
 
@@ -159,7 +159,7 @@ Missing a `.strings` entry causes the key itself to be shown at runtime — alwa
 - Framework: **Swift Testing** (`import Testing`, `@Test`, `#expect`).
 - Test files live in `Go-E-Wallbox-Charging-AppTests/` mirroring the source tree.
 - Use `WallboxServiceProtocol` to inject mock services in ViewModel tests.
-- Current tests: `WallboxServiceTests`, `DashboardViewModelTests`.
+- Current tests: `WallboxServiceTests`, `DashboardViewModelTests`, `AppSettingsTests`.
 
 ---
 
@@ -172,9 +172,10 @@ Missing a `.strings` entry causes the key itself to be shown at runtime — alwa
 - `DashboardViewModel`, `SettingsViewModel`.
 - **Feature 1**: Live wallbox status display — `GET /api/status`, `car` state mapping, power and session energy display, auto-refresh on Dashboard open.
 - **Feature 2**: Charge-limit control — `currentSOC` input → `dwo` calculation → `GET /api/set?dwo=...`, debounced wallbox sync on input change.
+- **Feature 3 (persistence part)**: Settings persistence via `UserDefaults` in `AppSettings` (loaded in `init`, written back in `didSet`).
 
 ### In Progress
-- Feature 3: Settings persistence (`@AppStorage`) and validation hardening.
+- Feature 3 (remaining part): settings validation hardening.
 
 ### Backlog (post-MVP)
 - Polling loop in `DashboardViewModel` (auto-refresh every 15 s).

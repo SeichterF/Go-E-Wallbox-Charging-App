@@ -41,7 +41,6 @@
 "connected" = "Verbunden";
 "disconnected" = "Nicht verbunden";
 "status_disconnected" = "Nicht verbunden";
-"status_idle" = "Eingesteckt (Bereit)";
 "status_charging" = "Lädt";
 "status_waiting" = "Wartet";
 "status_complete" = "Vollgeladen";

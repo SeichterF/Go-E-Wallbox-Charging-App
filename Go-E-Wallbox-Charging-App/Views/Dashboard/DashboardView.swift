@@ -286,7 +286,6 @@ private extension WallboxStatus.ConnectionState {
     var tintColor: Color {
         switch self {
         case .disconnected, .unknown: return .secondary
-        case .idle: return .orange
         case .charging: return .green
         case .waiting: return .yellow
         case .complete: return .blue
@@ -296,7 +295,6 @@ private extension WallboxStatus.ConnectionState {
     var iconName: String {
         switch self {
         case .disconnected: return "bolt.slash.fill"
-        case .idle: return "bolt.fill"
         case .charging: return "bolt.car.fill"
         case .waiting: return "clock.fill"
         case .complete: return "checkmark.circle.fill"

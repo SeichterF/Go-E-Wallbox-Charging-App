@@ -9,7 +9,7 @@ struct DashboardViewModelTests {
             result: .success(
                 WallboxStatus(
                     isConnected: true,
-                    connectionState: .idle,
+                    connectionState: .charging,
                     chargingPowerW: 11000,
                     energyPerDayWh: 23000,
                     chargeLimitWh: 0
@@ -60,7 +60,7 @@ private final class ApplyChargeLimitServiceMock: WallboxServiceProtocol {
     private(set) var lastAppliedChargeLimitWh: Int?
     private var status = WallboxStatus(
         isConnected: true,
-        connectionState: .idle,
+        connectionState: .waiting,
         chargingPowerW: 0,
         energyPerDayWh: 0,
         chargeLimitWh: 0

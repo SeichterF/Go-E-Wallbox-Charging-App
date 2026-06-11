@@ -24,14 +24,15 @@ struct WallboxAPIClient {
         }
 
         let carStatusValue = intValue(from: jsonObject["car"]) ?? 0
+        let connectionState = mapConnectionState(from: carStatusValue)
         let powerWFromNRG = powerFromEnergyArray(jsonObject["nrg"])
         let chargingPowerW = Int(powerWFromNRG.rounded())
         let sessionEnergyWh = intValue(from: jsonObject["wh"]) ?? 0
         let chargeLimitWh = intValue(from: jsonObject["dwo"]) ?? 0
 
         return WallboxStatus(
-            isConnected: carStatusValue != 0,
-            connectionState: mapConnectionState(from: carStatusValue),
+            isConnected: [.charging, .waiting, .complete].contains(connectionState),
+            connectionState: connectionState,
             chargingPowerW: chargingPowerW,
             energyPerDayWh: sessionEnergyWh,
             chargeLimitWh: chargeLimitWh
@@ -57,12 +58,12 @@ struct WallboxAPIClient {
         }
     }
 
+    // go-e API v2 `car` enum: Unknown/Error=0, Idle=1 (no vehicle connected),
+    // Charging=2, WaitCar=3, Complete=4, Error=5, Initializing=6
     private func mapConnectionState(from carValue: Int) -> WallboxStatus.ConnectionState {
         switch carValue {
-        case 0:
-            return .disconnected
         case 1:
-            return .idle
+            return .disconnected
         case 2:
             return .charging
         case 3:

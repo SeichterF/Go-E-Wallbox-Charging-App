@@ -41,7 +41,6 @@
 "connected" = "Connected";
 "disconnected" = "Disconnected";
 "status_disconnected" = "Disconnected";
-"status_idle" = "Plugged In (Idle)";
 "status_charging" = "Charging";
 "status_waiting" = "Waiting";
 "status_complete" = "Charge Complete";

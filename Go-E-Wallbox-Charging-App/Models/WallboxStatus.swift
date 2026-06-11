@@ -3,7 +3,6 @@ import Foundation
 struct WallboxStatus: Equatable {
     enum ConnectionState: Equatable {
         case disconnected
-        case idle
         case charging
         case waiting
         case complete
@@ -21,8 +20,6 @@ struct WallboxStatus: Equatable {
         switch connectionState {
         case .disconnected:
             return AppConstants.UI.statusDisconnected
-        case .idle:
-            return AppConstants.UI.statusIdle
         case .charging:
             return AppConstants.UI.statusCharging
         case .waiting:

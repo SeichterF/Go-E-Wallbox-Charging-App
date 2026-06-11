@@ -48,7 +48,6 @@ enum AppConstants {
         static let connected = String(localized: "connected")
         static let disconnected = String(localized: "disconnected")
         static let statusDisconnected = String(localized: "status_disconnected")
-        static let statusIdle = String(localized: "status_idle")
         static let statusCharging = String(localized: "status_charging")
         static let statusWaiting = String(localized: "status_waiting")
         static let statusComplete = String(localized: "status_complete")

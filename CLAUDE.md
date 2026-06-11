@@ -144,13 +144,19 @@ Missing a `.strings` entry causes the key itself to be shown at runtime — alwa
 
 ### Car connection states (`car` field)
 
-| Value | `ConnectionState` | Label |
-|---|---|---|
-| 0 | `.disconnected` | "Disconnected" |
-| 1 | `.idle` | "Plugged In (Idle)" |
-| 2 | `.charging` | "Charging" |
-| 3 | `.waiting` | "Waiting" |
-| 4 | `.complete` | "Charge Complete" |
+Official go-e enum: `Unknown/Error=0, Idle=1, Charging=2, WaitCar=3, Complete=4, Error=5, Initializing=6`. **`Idle` (1) means no vehicle is connected** — the wallbox is ready and waiting.
+
+| Value | go-e meaning | `ConnectionState` | Label |
+|---|---|---|---|
+| 0 | Unknown/Error | `.unknown` | "Unknown" |
+| 1 | Idle (no vehicle) | `.disconnected` | "Disconnected" |
+| 2 | Charging | `.charging` | "Charging" |
+| 3 | WaitCar | `.waiting` | "Waiting" |
+| 4 | Complete | `.complete` | "Charge Complete" |
+| 5 | Error | `.unknown` | "Unknown" |
+| 6 | Initializing | `.unknown` | "Unknown" |
+
+`isConnected` is true only for values 2, 3, and 4 (vehicle physically plugged in).
 
 ---
 

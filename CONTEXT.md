@@ -30,7 +30,7 @@ http://<wallbox-ip>/api/
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `car` | int | Car connection state: 1=idle, 2=charging, 3=waiting, 4=complete |
+| `car` | int | Car state: 0=unknown/error, 1=idle (no vehicle connected), 2=charging, 3=waitcar, 4=complete, 5=error, 6=initializing |
 | `amp` | int | Current charging amperage (A) |
 | `dwo` | int | Charge energy limit in Wh (0 = disabled) |
 | `nrg` | array | Energy array: nrg[11] = total power kW, nrg[12] = imported kWh this session |

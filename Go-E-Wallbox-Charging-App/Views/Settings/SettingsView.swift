@@ -3,7 +3,7 @@ import SwiftUI
 struct SettingsView: View {
     @State private var viewModel: SettingsViewModel
 
-    private enum Field { case ip, batterySize, targetSOC, chargingFactor }
+    private enum Field { case ip, batterySize, chargingFactor }
     @FocusState private var focusedField: Field?
 
     init(viewModel: SettingsViewModel) {
@@ -34,17 +34,6 @@ struct SettingsView: View {
                                 .multilineTextAlignment(.trailing)
                                 .focused($focusedField, equals: .batterySize)
                             Text(AppConstants.UI.unitKWh)
-                                .foregroundStyle(.secondary)
-                        }
-                    }
-
-                    LabeledContent(AppConstants.UI.targetBatteryLevel) {
-                        HStack {
-                            TextField("80", value: $viewModel.targetSOCPercent, format: .number)
-                                .keyboardType(.numberPad)
-                                .multilineTextAlignment(.trailing)
-                                .focused($focusedField, equals: .targetSOC)
-                            Text(AppConstants.UI.unitPercent)
                                 .foregroundStyle(.secondary)
                         }
                     }

@@ -12,7 +12,6 @@
 /* Settings – field labels */
 "wallbox_ip" = "Wallbox IP";
 "battery_size_kwh" = "Batteriegröße";
-"target_battery_level" = "Ziel-Ladestand";
 "charging_energy_factor" = "Energiefaktor";
 
 /* Settings – footer descriptions */
@@ -66,9 +65,10 @@
 "energy_today_format" = "Energie heute: %d Wh";
 
 /* SOC Progress Bar */
-"soc_progress_now_label" = "Jetzt";
+"soc_progress_current_label" = "Aktuell";
 "soc_progress_after_today_label" = "Nach heute";
 "soc_progress_target_label" = "Ziel";
 
 /* Validation */
 "soc_validation_error_max" = "Maximum ist 100 %";
+"target_soc_validation_error_range" = "Bereich %d–%d %%";

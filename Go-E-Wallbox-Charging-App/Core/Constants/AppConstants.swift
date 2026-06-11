@@ -14,7 +14,6 @@ enum AppConstants {
         // Settings – field labels
         static let wallboxIP = String(localized: "wallbox_ip")
         static let batterySizeKWh = String(localized: "battery_size_kwh")
-        static let targetBatteryLevel = String(localized: "target_battery_level")
         static let chargingEnergyFactor = String(localized: "charging_energy_factor")
 
         // Settings – units
@@ -67,11 +66,12 @@ enum AppConstants {
         static let energyLimitWhFormat = String(localized: "energy_limit_wh_format")
 
         // SOC Progress Bar labels
-        static let socProgressNowLabel = String(localized: "soc_progress_now_label")
+        static let socProgressCurrentLabel = String(localized: "soc_progress_current_label")
         static let socProgressAfterTodayLabel = String(localized: "soc_progress_after_today_label")
         static let socProgressTargetLabel = String(localized: "soc_progress_target_label")
 
         // SOC input validation
         static let socValidationErrorMax = String(localized: "soc_validation_error_max")
+        static let targetSOCValidationErrorRange = String(localized: "target_soc_validation_error_range")
     }
 }

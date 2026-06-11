@@ -18,6 +18,13 @@ final class DashboardViewModel {
     /// True while the field is empty because the user just tapped in to overwrite.
     var socFieldIsCleared = false
 
+    /// Transient target while the user drags the knob; settings are written on commit only.
+    var targetSOCDragValue: Int?
+    /// Digits-only display for the target SOC while editing via keyboard.
+    var targetSOCText: String = ""
+    /// True while the target field is empty because the user just tapped in to overwrite.
+    var targetSOCFieldIsCleared = false
+
     private var socTextBeforeEditing = "0"
     private var wallboxSyncTask: Task<Void, Never>?
     private var lastSyncedSOC: Int?
@@ -27,10 +34,12 @@ final class DashboardViewModel {
     init(service: WallboxServiceProtocol, settings: AppSettings) {
         self.service = service
         self.settings = settings
+        self.targetSOCText = String(settings.targetSOCPercent)
     }
 
-    var targetSOCPercent: Int {
-        settings.targetSOCPercent
+    /// Target SOC shown in the UI: the live drag value while dragging, otherwise the persisted setting.
+    var displayedTargetSOCPercent: Int {
+        targetSOCDragValue ?? settings.targetSOCPercent
     }
 
     var socValidationError: String? {
@@ -118,6 +127,59 @@ final class DashboardViewModel {
         if !currentSOCText.isEmpty && socValidationError == nil {
             scheduleDebouncedWallboxSync()
         }
+    }
+
+    // MARK: - Target SOC
+
+    var targetSOCValidationError: String? {
+        let digits = targetSOCText.filter(\.isNumber)
+        guard !digits.isEmpty, let value = Int(digits) else { return nil }
+        guard !(settings.minSOCPercent...settings.maxSOCPercent).contains(value) else { return nil }
+        return String(
+            format: AppConstants.UI.targetSOCValidationErrorRange,
+            settings.minSOCPercent,
+            settings.maxSOCPercent
+        )
+    }
+
+    /// Maps a horizontal position on the progress bar (0…1) to a target SOC,
+    /// snapped to `socStepPercent` and clamped to the allowed range.
+    func updateTargetSOCDrag(fraction: Double) {
+        let step = Double(settings.socStepPercent)
+        let snapped = Int((fraction * 100.0 / step).rounded() * step)
+        targetSOCDragValue = min(settings.maxSOCPercent, max(settings.minSOCPercent, snapped))
+    }
+
+    func commitTargetSOCDrag() {
+        guard let value = targetSOCDragValue else { return }
+        targetSOCDragValue = nil
+        applyTargetSOC(value)
+    }
+
+    func beginEditingTargetSOC() {
+        targetSOCText = ""
+        targetSOCFieldIsCleared = true
+    }
+
+    func endEditingTargetSOC() {
+        targetSOCText = String(settings.targetSOCPercent)
+        targetSOCFieldIsCleared = false
+    }
+
+    /// Strips non-digits and applies the value to settings only while it is within range.
+    func replaceTargetSOCTextWithSanitizedUserInput(_ raw: String) {
+        let digits = raw.filter(\.isNumber)
+        targetSOCText = digits.isEmpty ? "" : String(Int(digits) ?? 0)
+        targetSOCFieldIsCleared = targetSOCText.isEmpty
+
+        guard let value = Int(targetSOCText),
+              (settings.minSOCPercent...settings.maxSOCPercent).contains(value) else { return }
+        applyTargetSOC(value)
+    }
+
+    private func applyTargetSOC(_ value: Int) {
+        settings.targetSOCPercent = value
+        scheduleDebouncedWallboxSync()
     }
 
     func scheduleDebouncedWallboxSync() {

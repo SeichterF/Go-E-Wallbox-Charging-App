@@ -4,6 +4,9 @@ struct DashboardView: View {
     @State private var viewModel: DashboardViewModel
     @Environment(\.scenePhase) private var scenePhase
     @FocusState private var socFieldFocused: Bool
+    @FocusState private var targetFieldFocused: Bool
+
+    private static let progressBarCoordinateSpace = "socProgressBar"
 
     init(viewModel: DashboardViewModel) {
         _viewModel = State(initialValue: viewModel)
@@ -28,6 +31,15 @@ struct DashboardView: View {
             .scrollDismissesKeyboard(.interactively)
             .background(Color(.systemGroupedBackground))
             .navigationTitle(AppConstants.UI.dashboardTitle)
+            .toolbar {
+                ToolbarItemGroup(placement: .keyboard) {
+                    Spacer()
+                    Button(AppConstants.UI.done) {
+                        socFieldFocused = false
+                        targetFieldFocused = false
+                    }
+                }
+            }
             .task(id: scenePhase == .active) {
                 guard scenePhase == .active else { return }
                 await viewModel.startPolling()
@@ -167,14 +179,6 @@ struct DashboardView: View {
                 .focused($socFieldFocused)
                 .opacity(0.001)
                 .frame(maxWidth: .infinity, minHeight: 60)
-                .toolbar {
-                    ToolbarItemGroup(placement: .keyboard) {
-                        Spacer()
-                        Button(AppConstants.UI.done) {
-                            socFieldFocused = false
-                        }
-                    }
-                }
             }
             .frame(maxWidth: .infinity)
             .contentShape(Rectangle())
@@ -197,8 +201,9 @@ struct DashboardView: View {
     private var socProgressBar: some View {
         let current = viewModel.parsedCurrentSOCPercent
         let estimated = viewModel.calculatedCurrentSOCPercent
-        let target = viewModel.targetSOCPercent
+        let target = viewModel.displayedTargetSOCPercent
         let targetReached = estimated >= target
+        let isDraggingTarget = viewModel.targetSOCDragValue != nil
 
         return VStack(spacing: 8) {
             GeometryReader { geo in
@@ -228,8 +233,26 @@ struct DashboardView: View {
                         .stroke(targetReached ? Color.green : Color.secondary.opacity(0.5), lineWidth: 1.5)
                         .background(Circle().fill(Color(.systemBackground)))
                         .frame(width: 12, height: 12)
+                        .scaleEffect(isDraggingTarget ? 1.5 : 1.0)
+                        // Inverted inset: comfortable touch target without growing the layout.
+                        .contentShape(Circle().inset(by: -14))
                         .offset(x: targetX - 6, y: -2)
+                        .highPriorityGesture(
+                            DragGesture(
+                                minimumDistance: 0,
+                                coordinateSpace: .named(Self.progressBarCoordinateSpace)
+                            )
+                            .onChanged { value in
+                                guard w > 0 else { return }
+                                viewModel.updateTargetSOCDrag(fraction: value.location.x / w)
+                            }
+                            .onEnded { _ in
+                                viewModel.commitTargetSOCDrag()
+                            }
+                        )
+                        .animation(.easeInOut(duration: 0.15), value: isDraggingTarget)
                 }
+                .coordinateSpace(name: Self.progressBarCoordinateSpace)
             }
             .frame(height: 12)
 
@@ -237,7 +260,7 @@ struct DashboardView: View {
                 VStack(alignment: .leading, spacing: 1) {
                     Text("\(current) \(AppConstants.UI.unitPercent)")
                         .font(.caption2.weight(.semibold))
-                    Text(AppConstants.UI.socProgressNowLabel)
+                    Text(AppConstants.UI.socProgressCurrentLabel)
                         .font(.caption2)
                         .foregroundStyle(.secondary)
                 }
@@ -256,15 +279,55 @@ struct DashboardView: View {
 
                 Spacer()
 
-                VStack(alignment: .trailing, spacing: 1) {
-                    Text("\(target) \(AppConstants.UI.unitPercent)")
-                        .font(.caption2.weight(.semibold))
-                        .foregroundStyle(targetReached ? .green : .primary)
-                    Text(AppConstants.UI.socProgressTargetLabel)
-                        .font(.caption2)
-                        .foregroundStyle(.secondary)
-                }
+                targetValueLabel(target: target, targetReached: targetReached)
             }
+
+            if let error = viewModel.targetSOCValidationError {
+                Text(error)
+                    .font(.caption)
+                    .foregroundStyle(.red)
+                    .frame(maxWidth: .infinity, alignment: .trailing)
+                    .transition(.opacity.combined(with: .move(edge: .top)))
+            }
+        }
+        .animation(.easeInOut(duration: 0.2), value: viewModel.targetSOCValidationError != nil)
+    }
+
+    private func targetValueLabel(target: Int, targetReached: Bool) -> some View {
+        let displayedText = targetFieldFocused
+            ? (viewModel.targetSOCText.isEmpty ? "0" : viewModel.targetSOCText)
+            : "\(target)"
+
+        return VStack(alignment: .trailing, spacing: 1) {
+            ZStack {
+                Text("\(displayedText) \(AppConstants.UI.unitPercent)")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(
+                        viewModel.targetSOCValidationError != nil ? Color.red :
+                        viewModel.targetSOCFieldIsCleared ? Color.secondary.opacity(0.3) :
+                        targetFieldFocused ? Color.accentColor :
+                        targetReached ? Color.green : Color.primary
+                    )
+
+                TextField("", text: Binding(
+                    get: { viewModel.targetSOCText },
+                    set: { viewModel.replaceTargetSOCTextWithSanitizedUserInput($0) }
+                ))
+                .keyboardType(.numberPad)
+                .textContentType(.none)
+                .autocorrectionDisabled()
+                .focused($targetFieldFocused)
+                .opacity(0.001)
+                .frame(width: 44, height: 18)
+            }
+            Text(AppConstants.UI.socProgressTargetLabel)
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+        }
+        .contentShape(Rectangle())
+        .onTapGesture { targetFieldFocused = true }
+        .onChange(of: targetFieldFocused) { _, focused in
+            if focused { viewModel.beginEditingTargetSOC() } else { viewModel.endEditingTargetSOC() }
         }
     }
 

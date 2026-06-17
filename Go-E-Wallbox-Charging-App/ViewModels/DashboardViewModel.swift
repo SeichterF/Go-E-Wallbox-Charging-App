@@ -18,6 +18,9 @@ final class DashboardViewModel {
     /// True while the field is empty because the user just tapped in to overwrite.
     var socFieldIsCleared = false
 
+    /// Transient current SOC while the user drags the current dot; nil = not dragging.
+    var currentSOCDragValue: Int?
+
     /// Transient target while the user drags the knob; settings are written on commit only.
     var targetSOCDragValue: Int?
     /// Digits-only display for the target SOC while editing via keyboard.
@@ -35,6 +38,11 @@ final class DashboardViewModel {
         self.service = service
         self.settings = settings
         self.targetSOCText = String(settings.targetSOCPercent)
+    }
+
+    /// Current SOC shown on the progress bar: live drag value while dragging, otherwise parsed text.
+    var displayedCurrentSOCPercent: Int {
+        currentSOCDragValue ?? parsedCurrentSOCPercent
     }
 
     /// Target SOC shown in the UI: the live drag value while dragging, otherwise the persisted setting.
@@ -125,6 +133,26 @@ final class DashboardViewModel {
         socFieldIsCleared = currentSOCText.isEmpty
 
         if !currentSOCText.isEmpty && socValidationError == nil {
+            scheduleDebouncedWallboxSync()
+        }
+    }
+
+    // MARK: - Current SOC drag
+
+    func updateCurrentSOCDrag(fraction: Double) {
+        let step = Double(settings.socStepPercent)
+        let snapped = Int((fraction * 100.0 / step).rounded() * step)
+        let clamped = min(100, max(0, snapped))
+        currentSOCDragValue = clamped
+        currentSOCText = String(clamped)
+        socFieldIsCleared = false
+    }
+
+    func commitCurrentSOCDrag() {
+        guard let value = currentSOCDragValue else { return }
+        currentSOCDragValue = nil
+        currentSOCText = String(value)
+        if socValidationError == nil {
             scheduleDebouncedWallboxSync()
         }
     }

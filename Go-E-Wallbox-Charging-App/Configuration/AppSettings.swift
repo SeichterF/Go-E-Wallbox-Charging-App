@@ -17,6 +17,7 @@ final class AppSettings {
         static let targetSOCPercent = "targetSOCPercent"
         static let chargingEnergyFactor = "chargingEnergyFactor"
         static let pollingIntervalSeconds = "pollingIntervalSeconds"
+        static let selectedCardIndex = "selectedCardIndex"
     }
 
     private enum DefaultValues {
@@ -25,6 +26,7 @@ final class AppSettings {
         static let targetSOCPercent = 80
         static let chargingEnergyFactor = 0.85
         static let pollingIntervalSeconds: TimeInterval = 15.0
+        static let selectedCardIndex = 0
     }
 
     @ObservationIgnored private let defaults: UserDefaults
@@ -45,6 +47,11 @@ final class AppSettings {
     var pollingIntervalSeconds: TimeInterval {
         didSet { persist(pollingIntervalSeconds, forKey: StorageKeys.pollingIntervalSeconds) }
     }
+    var selectedCardIndex: Int {
+        didSet { persist(selectedCardIndex, forKey: StorageKeys.selectedCardIndex) }
+    }
+    /// Runtime cache of RFID cards fetched from the wallbox; not persisted across app restarts.
+    var availableCards: [RFIDCard] = []
 
     let minSOCPercent: Int = 10
     let maxSOCPercent: Int = 100
@@ -77,6 +84,9 @@ final class AppSettings {
         self.pollingIntervalSeconds = (cloudStore.object(forKey: StorageKeys.pollingIntervalSeconds) as? TimeInterval)
             ?? (defaults.object(forKey: StorageKeys.pollingIntervalSeconds) as? TimeInterval)
             ?? DefaultValues.pollingIntervalSeconds
+        self.selectedCardIndex = (cloudStore.object(forKey: StorageKeys.selectedCardIndex) as? Int)
+            ?? (defaults.object(forKey: StorageKeys.selectedCardIndex) as? Int)
+            ?? DefaultValues.selectedCardIndex
     }
 
     private func persist(_ value: Any, forKey key: String) {

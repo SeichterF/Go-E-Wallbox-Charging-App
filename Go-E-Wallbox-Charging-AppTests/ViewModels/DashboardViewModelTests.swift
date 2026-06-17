@@ -13,7 +13,10 @@ struct DashboardViewModelTests {
                     connectionState: .charging,
                     chargingPowerW: 11000,
                     energyPerDayWh: 23000,
-                    chargeLimitWh: 0
+                    chargeLimitWh: 0,
+                    forceState: 0,
+                    activeTransaction: -1,
+                    availableCards: []
                 )
             )
         )
@@ -113,7 +116,10 @@ struct DashboardViewModelTests {
                 connectionState: .waiting,
                 chargingPowerW: 0,
                 energyPerDayWh: 0,
-                chargeLimitWh: 15351
+                chargeLimitWh: 15351,
+                forceState: 0,
+                activeTransaction: -1,
+                availableCards: []
             )
         )
         let viewModel = DashboardViewModel(service: service, settings: appSettings)
@@ -223,7 +229,10 @@ struct DashboardViewModelTests {
                     connectionState: .charging,
                     chargingPowerW: 11000,
                     energyPerDayWh: 10000,
-                    chargeLimitWh: 0
+                    chargeLimitWh: 0,
+                    forceState: 0,
+                    activeTransaction: -1,
+                    availableCards: []
                 )
             )
         )
@@ -249,7 +258,10 @@ struct DashboardViewModelTests {
                     connectionState: .charging,
                     chargingPowerW: 11000,
                     energyPerDayWh: 200_000,
-                    chargeLimitWh: 0
+                    chargeLimitWh: 0,
+                    forceState: 0,
+                    activeTransaction: -1,
+                    availableCards: []
                 )
             )
         )
@@ -343,6 +355,8 @@ private struct DashboardServiceMock: WallboxServiceProtocol {
     }
 
     func updateChargingSettings(_: ChargingSettings) async throws {}
+    func startCharging(cardIndex: Int) async throws {}
+    func stopCharging() async throws {}
 }
 
 private final class ApplyChargeLimitServiceMock: WallboxServiceProtocol {
@@ -357,7 +371,10 @@ private final class ApplyChargeLimitServiceMock: WallboxServiceProtocol {
             connectionState: .waiting,
             chargingPowerW: 0,
             energyPerDayWh: 0,
-            chargeLimitWh: 0
+            chargeLimitWh: 0,
+            forceState: 0,
+            activeTransaction: -1,
+            availableCards: []
         )
     ) {
         self.status = initialStatus
@@ -379,7 +396,13 @@ private final class ApplyChargeLimitServiceMock: WallboxServiceProtocol {
             connectionState: status.connectionState,
             chargingPowerW: status.chargingPowerW,
             energyPerDayWh: status.energyPerDayWh,
-            chargeLimitWh: limit
+            chargeLimitWh: limit,
+            forceState: status.forceState,
+            activeTransaction: status.activeTransaction,
+            availableCards: status.availableCards
         )
     }
+
+    func startCharging(cardIndex: Int) async throws {}
+    func stopCharging() async throws {}
 }

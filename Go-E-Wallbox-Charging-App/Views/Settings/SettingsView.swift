@@ -51,6 +51,22 @@ struct SettingsView: View {
                     }
                 }
 
+                Section(
+                    header: Text(AppConstants.UI.settingsSectionRFID),
+                    footer: Text(AppConstants.UI.settingsRFIDHint)
+                ) {
+                    if viewModel.availableCards.isEmpty {
+                        Text(AppConstants.UI.settingsRFIDNoCards)
+                            .foregroundStyle(.secondary)
+                    } else {
+                        Picker(AppConstants.UI.settingsRFIDUser, selection: $viewModel.selectedCardIndex) {
+                            ForEach(viewModel.availableCards) { card in
+                                Text(card.name).tag(card.id)
+                            }
+                        }
+                    }
+                }
+
             }
             .scrollDismissesKeyboard(.interactively)
             .navigationTitle(AppConstants.UI.settingsTitle)

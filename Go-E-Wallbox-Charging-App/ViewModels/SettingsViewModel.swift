@@ -22,6 +22,15 @@ final class SettingsViewModel {
         set { settings.chargingEnergyFactor = newValue }
     }
 
+    var availableCards: [RFIDCard] {
+        settings.availableCards
+    }
+
+    var selectedCardIndex: Int {
+        get { settings.selectedCardIndex }
+        set { settings.selectedCardIndex = newValue }
+    }
+
     init(settings: AppSettings) {
         self.settings = settings
     }

@@ -96,12 +96,50 @@ final class DashboardViewModel {
         }
     }
 
+    var isForceCharging: Bool {
+        status.forceState == 2
+    }
+
+    var canStartCharging: Bool {
+        status.isConnected && !isForceCharging
+    }
+
+    var selectedCardName: String? {
+        settings.availableCards.first(where: { $0.id == settings.selectedCardIndex })?.name
+    }
+
+    func startCharging() async {
+        isLoading = true
+        errorMessage = nil
+        let cardIndex = settings.availableCards.isEmpty ? -1 : settings.selectedCardIndex
+        do {
+            try await service.startCharging(cardIndex: cardIndex)
+            status = try await service.fetchStatus()
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+        isLoading = false
+    }
+
+    func stopCharging() async {
+        isLoading = true
+        errorMessage = nil
+        do {
+            try await service.stopCharging()
+            status = try await service.fetchStatus()
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+        isLoading = false
+    }
+
     func refreshStatus() async {
         isLoading = true
         errorMessage = nil
 
         do {
             status = try await service.fetchStatus()
+            settings.availableCards = status.availableCards
             if needsInitializationFromWallbox {
                 initializeSOCFromWallbox()
                 needsInitializationFromWallbox = false

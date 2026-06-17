@@ -15,6 +15,11 @@ struct WallboxStatus: Equatable {
     let energyPerDayWh: Int
     /// Active charge energy limit from wallbox `dwo` (Wh); `0` means no limit.
     let chargeLimitWh: Int
+    /// go-e API `frc`: 0=neutral, 1=force off, 2=force on.
+    let forceState: Int
+    /// go-e API `trx`: active transaction card index (1-based); -1 means none.
+    let activeTransaction: Int
+    let availableCards: [RFIDCard]
 
     var connectionStateLabel: String {
         switch connectionState {
@@ -36,6 +41,9 @@ struct WallboxStatus: Equatable {
         connectionState: .unknown,
         chargingPowerW: 0,
         energyPerDayWh: 0,
-        chargeLimitWh: 0
+        chargeLimitWh: 0,
+        forceState: 0,
+        activeTransaction: -1,
+        availableCards: []
     )
 }

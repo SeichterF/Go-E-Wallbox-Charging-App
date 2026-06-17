@@ -17,6 +17,9 @@ struct DashboardView: View {
             ScrollView {
                 VStack(spacing: 16) {
                     statusCard
+                    if viewModel.status.isConnected {
+                        chargingControlCard
+                    }
                     chargeLimitCard
                     if let errorMessage = viewModel.errorMessage {
                         Text(errorMessage)
@@ -106,6 +109,35 @@ struct DashboardView: View {
                             .foregroundStyle(.secondary)
                     }
                 }
+            }
+        }
+        .padding()
+        .background(.background, in: RoundedRectangle(cornerRadius: 16))
+        .shadow(color: .black.opacity(0.06), radius: 8, x: 0, y: 2)
+    }
+
+    private var chargingControlCard: some View {
+        VStack(spacing: 12) {
+            if viewModel.isForceCharging {
+                Button(AppConstants.UI.dashboardStopCharging) {
+                    Task { await viewModel.stopCharging() }
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(.red)
+                .frame(maxWidth: .infinity)
+            } else {
+                Button(AppConstants.UI.dashboardStartCharging) {
+                    Task { await viewModel.startCharging() }
+                }
+                .buttonStyle(.borderedProminent)
+                .frame(maxWidth: .infinity)
+                .disabled(viewModel.isLoading)
+            }
+
+            if let cardName = viewModel.selectedCardName {
+                Text(String(format: AppConstants.UI.dashboardChargingAsFormat, cardName))
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
             }
         }
         .padding()

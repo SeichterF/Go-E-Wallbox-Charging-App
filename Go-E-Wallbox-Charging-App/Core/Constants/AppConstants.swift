@@ -40,12 +40,6 @@ enum AppConstants {
         // Dashboard – formatted values
         static let dashboardEnergyLimitValueFormat = String(localized: "dashboard_energy_limit_value_format")
 
-        // Legacy format strings (kept for reference)
-        static let wallboxStatusFormat = String(localized: "wallbox_status_format")
-        static let chargingPowerFormat = String(localized: "charging_power_format")
-        static let energyTodayFormat = String(localized: "energy_today_format")
-        static let connected = String(localized: "connected")
-        static let disconnected = String(localized: "disconnected")
         static let statusDisconnected = String(localized: "status_disconnected")
         static let statusCharging = String(localized: "status_charging")
         static let statusWaiting = String(localized: "status_waiting")
@@ -61,9 +55,7 @@ enum AppConstants {
         static let calculatedChargeLimitTargetReached = String(localized: "calculated_charge_limit_target_reached")
         static let calculatedChargeLimitFormat = String(localized: "calculated_charge_limit_format")
         static let calculatedChargeLimitNone = String(localized: "calculated_charge_limit_none")
-        static let noChargeLimit = String(localized: "no_charge_limit")
         static let noChargeLimitValue = String(localized: "no_charge_limit_value")
-        static let energyLimitWhFormat = String(localized: "energy_limit_wh_format")
 
         // SOC Progress Bar labels
         static let socProgressCurrentLabel = String(localized: "soc_progress_current_label")

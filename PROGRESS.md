@@ -16,7 +16,6 @@
 - [x] Core project docs and guardrails added:
   - `CONTEXT.md`
   - `ARCHITECTURE.md`
-  - `.cursorrules`
 - [x] Base app flow and UI shell implemented:
   - `MainTabView` with Dashboard + Settings
   - Shared components (`PrimaryButton`, `StatusBadge`, `ChargingCardView`)

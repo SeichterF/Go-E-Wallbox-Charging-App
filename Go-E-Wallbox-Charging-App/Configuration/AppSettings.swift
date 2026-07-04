@@ -1,6 +1,14 @@
 import Foundation
 import Observation
 
+protocol CloudKeyValueStore {
+    func object(forKey key: String) -> Any?
+    func set(_ value: Any?, forKey key: String)
+    @discardableResult func synchronize() -> Bool
+}
+
+extension NSUbiquitousKeyValueStore: CloudKeyValueStore {}
+
 @Observable
 final class AppSettings {
     private enum StorageKeys {
@@ -20,21 +28,22 @@ final class AppSettings {
     }
 
     @ObservationIgnored private let defaults: UserDefaults
+    @ObservationIgnored private let cloudStore: CloudKeyValueStore
 
     var chargerIP: String {
-        didSet { defaults.set(chargerIP, forKey: StorageKeys.chargerIP) }
+        didSet { persist(chargerIP, forKey: StorageKeys.chargerIP) }
     }
     var batterySizeKWh: Double {
-        didSet { defaults.set(batterySizeKWh, forKey: StorageKeys.batterySizeKWh) }
+        didSet { persist(batterySizeKWh, forKey: StorageKeys.batterySizeKWh) }
     }
     var targetSOCPercent: Int {
-        didSet { defaults.set(targetSOCPercent, forKey: StorageKeys.targetSOCPercent) }
+        didSet { persist(targetSOCPercent, forKey: StorageKeys.targetSOCPercent) }
     }
     var chargingEnergyFactor: Double {
-        didSet { defaults.set(chargingEnergyFactor, forKey: StorageKeys.chargingEnergyFactor) }
+        didSet { persist(chargingEnergyFactor, forKey: StorageKeys.chargingEnergyFactor) }
     }
     var pollingIntervalSeconds: TimeInterval {
-        didSet { defaults.set(pollingIntervalSeconds, forKey: StorageKeys.pollingIntervalSeconds) }
+        didSet { persist(pollingIntervalSeconds, forKey: StorageKeys.pollingIntervalSeconds) }
     }
 
     let minSOCPercent: Int = 10
@@ -45,17 +54,33 @@ final class AppSettings {
         "http://\(chargerIP)/api/"
     }
 
-    init(defaults: UserDefaults = .standard) {
+    init(
+        defaults: UserDefaults = .standard,
+        cloudStore: CloudKeyValueStore = NSUbiquitousKeyValueStore.default
+    ) {
         self.defaults = defaults
-        self.chargerIP = defaults.string(forKey: StorageKeys.chargerIP)
+        self.cloudStore = cloudStore
+        cloudStore.synchronize()
+
+        self.chargerIP = (cloudStore.object(forKey: StorageKeys.chargerIP) as? String)
+            ?? defaults.string(forKey: StorageKeys.chargerIP)
             ?? DefaultValues.chargerIP
-        self.batterySizeKWh = defaults.object(forKey: StorageKeys.batterySizeKWh) as? Double
+        self.batterySizeKWh = (cloudStore.object(forKey: StorageKeys.batterySizeKWh) as? Double)
+            ?? (defaults.object(forKey: StorageKeys.batterySizeKWh) as? Double)
             ?? DefaultValues.batterySizeKWh
-        self.targetSOCPercent = defaults.object(forKey: StorageKeys.targetSOCPercent) as? Int
+        self.targetSOCPercent = (cloudStore.object(forKey: StorageKeys.targetSOCPercent) as? Int)
+            ?? (defaults.object(forKey: StorageKeys.targetSOCPercent) as? Int)
             ?? DefaultValues.targetSOCPercent
-        self.chargingEnergyFactor = defaults.object(forKey: StorageKeys.chargingEnergyFactor) as? Double
+        self.chargingEnergyFactor = (cloudStore.object(forKey: StorageKeys.chargingEnergyFactor) as? Double)
+            ?? (defaults.object(forKey: StorageKeys.chargingEnergyFactor) as? Double)
             ?? DefaultValues.chargingEnergyFactor
-        self.pollingIntervalSeconds = defaults.object(forKey: StorageKeys.pollingIntervalSeconds) as? TimeInterval
+        self.pollingIntervalSeconds = (cloudStore.object(forKey: StorageKeys.pollingIntervalSeconds) as? TimeInterval)
+            ?? (defaults.object(forKey: StorageKeys.pollingIntervalSeconds) as? TimeInterval)
             ?? DefaultValues.pollingIntervalSeconds
+    }
+
+    private func persist(_ value: Any, forKey key: String) {
+        defaults.set(value, forKey: key)
+        cloudStore.set(value, forKey: key)
     }
 }

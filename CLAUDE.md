@@ -129,7 +129,7 @@ Missing a `.strings` entry causes the key itself to be shown at runtime — alwa
 | `chargingEnergyFactor` | `Double` | `0.85` |
 | `pollingIntervalSeconds` | `TimeInterval` | `15.0` |
 
-Settings persist via `UserDefaults`: each mutable property is loaded in `init` (falling back to its default) and written back in `didSet`. The `UserDefaults` instance is injectable (`init(defaults: UserDefaults = .standard)`) so tests use an isolated suite. `@AppStorage` is deliberately not used — it does not work inside `@Observable` classes without breaking observation.
+Settings persist via **iCloud Key-Value Store + UserDefaults**. Read fallback chain in `init`: iCloud → UserDefaults → hardcoded default. Every change is written to both stores in `didSet`. Both are injectable (`init(defaults:cloudStore:)`) — tests use an isolated `UserDefaults` suite and a `MockCloudStore` (conforming to `CloudKeyValueStore`). Requires the `com.apple.developer.ubiquity-kvstore-identifier` entitlement (`Go-E-Wallbox-Charging-App.entitlements`). `@AppStorage` is deliberately not used — it does not work inside `@Observable` classes without breaking observation.
 
 ---
 
@@ -178,7 +178,7 @@ Official go-e enum: `Unknown/Error=0, Idle=1, Charging=2, WaitCar=3, Complete=4,
 - `DashboardViewModel`, `SettingsViewModel`.
 - **Feature 1**: Live wallbox status display — `GET /api/status`, `car` state mapping, power and session energy display, auto-refresh on Dashboard open.
 - **Feature 2**: Charge-limit control — `currentSOC` input → `dwo` calculation → `GET /api/set?dwo=...`, debounced wallbox sync on input change.
-- **Feature 3 (persistence part)**: Settings persistence via `UserDefaults` in `AppSettings` (loaded in `init`, written back in `didSet`).
+- **Feature 3 (persistence part)**: Settings persistence via iCloud KV Store + UserDefaults in `AppSettings` (fallback chain iCloud → UserDefaults → default, written to both in `didSet`).
 
 ### In Progress
 - Feature 3 (remaining part): settings validation hardening.

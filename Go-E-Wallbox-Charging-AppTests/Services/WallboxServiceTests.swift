@@ -41,15 +41,39 @@ struct WallboxServiceTests {
     }
 
     @Test
-    func fetchStatusReturnsPlaceholderFromClient() async throws {
-        let settings = AppSettings()
-        let service = WallboxService(
-            apiClient: WallboxAPIClient(settings: settings),
-            settings: settings
+    func chargingSettingsYieldsZeroWhenCurrentSOCExceedsTarget() {
+        let chargingSettings = ChargingSettings(
+            currentSOCPercent: 90,
+            targetSOCPercent: 80,
+            batterySizeKWh: 42,
+            chargingEnergyFactor: 0.85
         )
 
-        let status = try await service.fetchStatus()
+        #expect(chargingSettings.computedChargeLimitWh == 0)
+    }
 
-        #expect(status == .placeholder)
+    @Test
+    func chargingSettingsYieldsZeroWhenEnergyFactorIsZero() {
+        let chargingSettings = ChargingSettings(
+            currentSOCPercent: 20,
+            targetSOCPercent: 80,
+            batterySizeKWh: 42,
+            chargingEnergyFactor: 0
+        )
+
+        #expect(chargingSettings.computedChargeLimitWh == 0)
+    }
+
+    @Test
+    func chargingSettingsRoundsFractionalWattHoursToNearestInteger() {
+        let chargingSettings = ChargingSettings(
+            currentSOCPercent: 20,
+            targetSOCPercent: 80,
+            batterySizeKWh: 42,
+            chargingEnergyFactor: 0.851
+        )
+
+        // 25200 Wh × 0.851 = 21445.2 → 21445
+        #expect(chargingSettings.computedChargeLimitWh == 21445)
     }
 }

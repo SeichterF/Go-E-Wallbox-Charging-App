@@ -2,9 +2,11 @@ import Foundation
 
 struct WallboxAPIClient {
     private let settings: AppSettings
+    private let session: URLSession
 
-    init(settings: AppSettings) {
+    init(settings: AppSettings, session: URLSession = .shared) {
         self.settings = settings
+        self.session = session
     }
 
     func fetchStatus() async throws -> WallboxStatus {
@@ -12,7 +14,7 @@ struct WallboxAPIClient {
             throw URLError(.badURL)
         }
 
-        let (data, response) = try await URLSession.shared.data(from: statusURL)
+        let (data, response) = try await session.data(from: statusURL)
 
         guard let httpResponse = response as? HTTPURLResponse,
               200..<300 ~= httpResponse.statusCode else {
@@ -50,7 +52,7 @@ struct WallboxAPIClient {
             throw URLError(.badURL)
         }
 
-        let (_, response) = try await URLSession.shared.data(from: url)
+        let (_, response) = try await session.data(from: url)
 
         guard let httpResponse = response as? HTTPURLResponse,
               200..<300 ~= httpResponse.statusCode else {

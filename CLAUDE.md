@@ -162,7 +162,7 @@ Official go-e enum: `Unknown/Error=0, Idle=1, Charging=2, WaitCar=3, Complete=4,
 - Framework: **Swift Testing** (`import Testing`, `@Test`, `#expect`).
 - Test files live in `Go-E-Wallbox-Charging-AppTests/` mirroring the source tree.
 - Use `WallboxServiceProtocol` to inject mock services in ViewModel tests.
-- Current tests: `WallboxServiceTests`, `DashboardViewModelTests`, `AppSettingsTests`.
+- Current tests: `WallboxServiceTests`, `WallboxAPIClientTests`, `DashboardViewModelTests`, `AppSettingsTests`.
 
 ---
 

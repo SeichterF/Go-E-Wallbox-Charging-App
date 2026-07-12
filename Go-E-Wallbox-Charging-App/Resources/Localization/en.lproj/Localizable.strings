@@ -37,8 +37,6 @@
 "dashboard_energy_limit_value_format" = "%.1f kWh";
 
 /* Connection status */
-"connected" = "Connected";
-"disconnected" = "Disconnected";
 "status_disconnected" = "Disconnected";
 "status_charging" = "Charging";
 "status_waiting" = "Waiting";
@@ -55,14 +53,7 @@
 "calculated_charge_limit_target_reached" = "Target already reached";
 "calculated_charge_limit_format" = "Calculated limit: %.1f kWh (%d Wh)";
 "calculated_charge_limit_none" = "Calculated limit: none (unlimited on wallbox)";
-"no_charge_limit" = "Energy limit: none (unlimited)";
 "no_charge_limit_value" = "None";
-"energy_limit_wh_format" = "Energy limit: %.1f kWh (%d Wh)";
-
-/* Legacy format strings */
-"wallbox_status_format" = "Wallbox Status: %@";
-"charging_power_format" = "Charging Power: %d W";
-"energy_today_format" = "Energy Today: %d Wh";
 
 /* SOC Progress Bar */
 "soc_progress_current_label" = "Current";

@@ -51,13 +51,9 @@ Go-E-Wallbox-Charging-App/
 └── Views/
     ├── MainTabView.swift                    # Tab container (Dashboard + Settings)
     ├── Dashboard/
-    │   ├── DashboardView.swift
-    │   └── ChargingCardView.swift
-    ├── Settings/
-    │   └── SettingsView.swift
-    └── Shared/
-        ├── PrimaryButton.swift
-        └── StatusBadge.swift
+    │   └── DashboardView.swift
+    └── Settings/
+        └── SettingsView.swift
 ```
 
 ---

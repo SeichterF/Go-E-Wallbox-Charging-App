@@ -173,7 +173,7 @@ struct WallboxAPIClientTests {
         )
 
         let requestedURL = try #require(URLProtocolStub.recordedURLs.last)
-        #expect(requestedURL.absoluteString == "http://192.168.178.69/api/set?dwo=15351")
+        #expect(requestedURL.absoluteString == "http://192.168.178.69/api/set?dwo=21247")
     }
 
     // MARK: - Helpers

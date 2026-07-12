@@ -234,8 +234,8 @@ final class DashboardViewModel {
               settings.chargingEnergyFactor > 0 else { return }
 
         let implied = settings.targetSOCPercent
-            - Int((Double(limitWh) * 100.0
-                / (settings.batterySizeKWh * 1000.0 * settings.chargingEnergyFactor)).rounded())
+            - Int((Double(limitWh) * settings.chargingEnergyFactor * 100.0
+                / (settings.batterySizeKWh * 1000.0)).rounded())
         let clamped = max(0, min(100, implied))
         currentSOCText = String(clamped)
         lastSyncedSOC = clamped

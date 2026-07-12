@@ -59,18 +59,18 @@ This replicates the existing iOS Shortcut logic:
 | `currentSOC` | Current battery state of charge (%) | 37 |
 | `targetSOC` | Maximum charge target (%) | 80 |
 | `batteryCapacity` | Vehicle battery size (kWh) | 42 |
-| `chargingEnergyFactor` | Multiply needed battery Wh by this to get wallbox `dwo` Wh | 0.85 |
+| `chargingEnergyFactor` | Divide needed battery Wh by this to get wallbox `dwo` Wh (accounts for charging losses) | 0.85 |
 
 ### Formula (implemented in `ChargingSettings.computedChargeLimitWh`)
 ```swift
 let deltaSOC = targetSOC - currentSOC                     // e.g. 43%
 let neededBatteryKWh = deltaSOC / 100 * batteryCapacity   // kWh still to fill in the pack
 let neededBatteryWh = neededBatteryKWh * 1000
-let wallboxWh = neededBatteryWh * chargingEnergyFactor    // e.g. × 0.85
+let wallboxWh = neededBatteryWh / chargingEnergyFactor    // e.g. ÷ 0.85 to offset charging losses
 let dwoValue = Int(wallboxWh.rounded())                   // Wh → sent to API
 ```
 
-Example: current 37%, target 80%, battery 42 kWh, factor 0.85 → `dwo` = 15351 Wh.
+Example: current 37%, target 80%, battery 42 kWh, factor 0.85 → `dwo` = 21247 Wh.
 
 If `deltaSOC ≤ 0` (target already reached) or `chargingEnergyFactor ≤ 0`, the result is `0` (no limit sent).
 

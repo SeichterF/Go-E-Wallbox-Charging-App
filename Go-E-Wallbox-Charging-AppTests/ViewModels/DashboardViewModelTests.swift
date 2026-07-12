@@ -53,8 +53,8 @@ struct DashboardViewModelTests {
 
         await viewModel.synchronizeChargeLimitWithWallbox()
 
-        #expect(service.lastAppliedChargeLimitWh == 15351)
-        #expect(viewModel.status.chargeLimitWh == 15351)
+        #expect(service.lastAppliedChargeLimitWh == 21247)
+        #expect(viewModel.status.chargeLimitWh == 21247)
         #expect(viewModel.errorMessage == nil)
         #expect(viewModel.isLoading == false)
     }
@@ -106,14 +106,14 @@ struct DashboardViewModelTests {
         appSettings.batterySizeKWh = 42
         appSettings.chargingEnergyFactor = 0.85
 
-        // dwo 15351 Wh at 42 kWh × 0.85 implies 43 SOC points → current SOC 80 − 43 = 37.
+        // dwo 21247 Wh at 42 kWh ÷ 0.85 implies 43 SOC points → current SOC 80 − 43 = 37.
         let service = ApplyChargeLimitServiceMock(
             initialStatus: WallboxStatus(
                 isConnected: true,
                 connectionState: .waiting,
                 chargingPowerW: 0,
                 energyPerDayWh: 0,
-                chargeLimitWh: 15351
+                chargeLimitWh: 21247
             )
         )
         let viewModel = DashboardViewModel(service: service, settings: appSettings)
@@ -305,8 +305,8 @@ struct DashboardViewModelTests {
 
         await viewModel.synchronizeChargeLimitWithWallbox()
 
-        // (90 − 37) % of 42 kWh × 0.85 = 18 921 Wh
-        #expect(service.lastAppliedChargeLimitWh == 18921)
+        // (90 − 37) % of 42 kWh ÷ 0.85 = 26 188 Wh
+        #expect(service.lastAppliedChargeLimitWh == 26188)
     }
 
     @MainActor

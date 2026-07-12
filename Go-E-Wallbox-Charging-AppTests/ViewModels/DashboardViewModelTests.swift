@@ -31,6 +31,32 @@ struct DashboardViewModelTests {
 
     @MainActor
     @Test
+    func isForceChargingReflectsActiveChargingSessionEvenWithoutForceState() async {
+        // A session started via a physical RFID card leaves `frc` at 0 even while `car` reports charging.
+        let service = DashboardServiceMock(
+            result: .success(
+                WallboxStatus(
+                    isConnected: true,
+                    connectionState: .charging,
+                    chargingPowerW: 11000,
+                    energyPerDayWh: 5000,
+                    chargeLimitWh: 0,
+                    forceState: 0,
+                    activeTransaction: -1,
+                    availableCards: []
+                )
+            )
+        )
+        let viewModel = DashboardViewModel(service: service, settings: AppSettings())
+
+        await viewModel.refreshStatus()
+
+        #expect(viewModel.isForceCharging)
+        #expect(viewModel.canStartCharging == false)
+    }
+
+    @MainActor
+    @Test
     func refreshStatusSurfacesErrorMessageOnFailure() async {
         let service = DashboardServiceMock(result: .failure(URLError(.badServerResponse)))
         let viewModel = DashboardViewModel(service: service, settings: AppSettings())

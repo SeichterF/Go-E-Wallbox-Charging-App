@@ -97,7 +97,7 @@ final class DashboardViewModel {
     }
 
     var isForceCharging: Bool {
-        status.forceState == 2
+        status.connectionState == .charging || status.forceState == 2
     }
 
     var canStartCharging: Bool {

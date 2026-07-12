@@ -6,7 +6,7 @@ This file is the primary reference for AI assistants working in this repository.
 
 ## Project Overview
 
-iOS app (SwiftUI, MVVM) that provides a native UI for controlling a **go-e Wallbox** EV charger via its local HTTP API v2. Replaces manual iOS Shortcuts with a proper native app. Written in Swift 6, targets iOS 25.
+iOS app (SwiftUI, MVVM) that provides a native UI for controlling a **go-e Wallbox** EV charger via its local HTTP API v2. Replaces manual iOS Shortcuts with a proper native app. Written in Swift (Swift 5 language mode), targets iOS 26.
 
 See [`CONTEXT.md`](CONTEXT.md) for API field reference and charge-limit formula. See [`ARCHITECTURE.md`](ARCHITECTURE.md) for architectural diagrams and layer responsibilities.
 
@@ -16,10 +16,10 @@ See [`CONTEXT.md`](CONTEXT.md) for API field reference and charge-limit formula.
 
 | Concern | Technology |
 |---|---|
-| Language | Swift 6 |
+| Language | Swift (Swift 5 language mode) |
 | UI | SwiftUI, async/await — no Combine, no callbacks |
 | State | `@Observable` — not `ObservableObject` |
-| Minimum iOS | iOS 25 |
+| Minimum iOS | iOS 26 |
 | Third-party packages | None |
 | Testing | Swift Testing framework (`@Test`, `#expect`) |
 | Hardware API | go-e HTTP API v2 (local network) |
@@ -41,6 +41,10 @@ Go-E-Wallbox-Charging-App/
 ├── Models/
 │   ├── WallboxStatus.swift                  # API response model + ConnectionState enum
 │   └── ChargingSettings.swift               # Charge-limit input struct
+├── Resources/
+│   └── Localization/
+│       ├── en.lproj/Localizable.strings     # English UI strings
+│       └── de.lproj/Localizable.strings     # German UI strings
 ├── Services/
 │   ├── WallboxServiceProtocol.swift         # Protocol for testability
 │   ├── WallboxService.swift                 # Business-logic wrapper (implements protocol)
@@ -67,13 +71,7 @@ Go-E-Wallbox-Charging-App/
 - **`AppSettings`** is the single source of truth for all user preferences and config.
 - Never bypass the ViewModel to call a Service directly from a View.
 
-### Dependency graph
-
-```
-App entry point
-    └── AppSettings (injected into WallboxAPIClient + WallboxService + ViewModels)
-            └── WallboxAPIClient  ←  WallboxService  ←  DashboardViewModel  ←  DashboardView
-```
+Data-flow diagrams and per-layer details: see [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 ---
 
@@ -124,6 +122,9 @@ Missing a `.strings` entry causes the key itself to be shown at runtime — alwa
 | `targetSOCPercent` | `Int` | `80` |
 | `chargingEnergyFactor` | `Double` | `0.85` |
 | `pollingIntervalSeconds` | `TimeInterval` | `15.0` |
+| `minSOCPercent` (constant) | `Int` | `10` |
+| `maxSOCPercent` (constant) | `Int` | `100` |
+| `socStepPercent` (constant) | `Int` | `5` |
 
 Settings persist via **iCloud Key-Value Store + UserDefaults**. Read fallback chain in `init`: iCloud → UserDefaults → hardcoded default. Every change is written to both stores in `didSet`. Both are injectable (`init(defaults:cloudStore:)`) — tests use an isolated `UserDefaults` suite and a `MockCloudStore` (conforming to `CloudKeyValueStore`). Requires the `com.apple.developer.ubiquity-kvstore-identifier` entitlement (`Go-E-Wallbox-Charging-App.entitlements`). `@AppStorage` is deliberately not used — it does not work inside `@Observable` classes without breaking observation.
 
@@ -131,10 +132,9 @@ Settings persist via **iCloud Key-Value Store + UserDefaults**. Read fallback ch
 
 ## go-e API Conventions
 
-- Base URL: `http://<chargerIP>/api/` — always from `AppSettings.apiBaseURLString`.
-- Status endpoint: `GET /api/status`
-- Set endpoint: `GET /api/set?<key>=<value>`
-- Charge-limit field: `dwo` in **Wh** (multiply kWh × 1000 — never send kWh directly).
+Base URL, endpoints, and status fields: see [`CONTEXT.md`](CONTEXT.md) for the full reference.
+
+- Charge-limit field `dwo` is always sent in **Wh**, computed via `ChargingSettings.computedChargeLimitWh` (see CONTEXT.md for the formula) — never send raw kWh.
 - Always refresh status after a successful SET call.
 - Polling interval: 15–20 seconds (from `AppSettings.pollingIntervalSeconds`).
 
@@ -161,7 +161,7 @@ Official go-e enum: `Unknown/Error=0, Idle=1, Charging=2, WaitCar=3, Complete=4,
 - Framework: **Swift Testing** (`import Testing`, `@Test`, `#expect`).
 - Test files live in `Go-E-Wallbox-Charging-AppTests/` mirroring the source tree.
 - Use `WallboxServiceProtocol` to inject mock services in ViewModel tests.
-- Current tests: `WallboxServiceTests`, `DashboardViewModelTests`, `AppSettingsTests`.
+- Current tests: `WallboxServiceTests`, `WallboxAPIClientTests`, `DashboardViewModelTests`, `AppSettingsTests`.
 
 ---
 
@@ -172,18 +172,12 @@ Official go-e enum: `Unknown/Error=0, Idle=1, Charging=2, WaitCar=3, Complete=4,
 - `AppSettings`, `WallboxStatus`, `ChargingSettings` models.
 - `WallboxServiceProtocol`, `WallboxService`, `WallboxAPIClient`.
 - `DashboardViewModel`, `SettingsViewModel`.
-- **Feature 1**: Live wallbox status display — `GET /api/status`, `car` state mapping, power and session energy display, auto-refresh on Dashboard open.
-- **Feature 2**: Charge-limit control — `currentSOC` input → `dwo` calculation → `GET /api/set?dwo=...`, debounced wallbox sync on input change.
+- **Feature 1**: Live wallbox status display — `GET /api/status`, `car` state mapping, power and session energy display, polling loop (every 15 s while the Dashboard is active).
+- **Feature 2**: Charge-limit control — current SOC and target SOC set via draggable dots on the Dashboard progress bar (or tap-to-type) → `dwo` calculation → `GET /api/set?dwo=...`, debounced wallbox sync on input change, status refresh after each SET.
 - **Feature 3 (persistence part)**: Settings persistence via iCloud KV Store + UserDefaults in `AppSettings` (fallback chain iCloud → UserDefaults → default, written to both in `didSet`).
 
 ### In Progress
 - Feature 3 (remaining part): settings validation hardening.
-
-### Backlog (post-MVP)
-- Polling loop in `DashboardViewModel` (auto-refresh every 15 s).
-- Push notifications on plug-in event (Synology poller → Supabase → APNs).
-- Charging session history via Supabase Postgres.
-- Deep link from notification into ChargeLimitView.
 
 ---
 

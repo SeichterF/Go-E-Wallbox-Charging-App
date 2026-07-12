@@ -1,6 +1,6 @@
 # Architecture: go-e Wallbox iOS App
 
-This file describes how the app's layers work together and the planned post-MVP backend.
+This file describes how the app's layers work together.
 For coding rules, folder structure, tech stack, and implementation state see [`CLAUDE.md`](CLAUDE.md);
 for the go-e API field reference and the charge-limit formula see [`CONTEXT.md`](CONTEXT.md).
 
@@ -80,33 +80,6 @@ status is refreshed to confirm the change.
 
 ---
 
-## Backend (Post-MVP)
+## Remote Access
 
-### Components
-
-| Component | Technology | Responsibility |
-|-----------|-----------|----------------|
-| Poller | Python on Synology NAS | Polls wallbox every 15–20s, detects plug-in event |
-| Notification relay | Supabase Edge Function (Deno) | Receives event, sends APNs push |
-| Push delivery | Apple APNs | Delivers notification to iPhone |
-| Session storage | Supabase Postgres | Logs charging sessions (kWh, timestamp) |
-
-### Poller Logic (Python, simplified)
-```python
-prev_state = None
-while True:
-    status = get("/api/status")
-    if prev_state == 1 and status["car"] in [2, 3]:
-        trigger_push_notification()
-    prev_state = status["car"]
-    sleep(15)
-```
-
-### APNs Notes
-- Requires Apple Developer Account (99€/yr)
-- Supabase Edge Function handles APNs auth (JWT, p8 key)
-- Notifications are queued by APNs if device is offline – delivered on next WiFi connect
-- Notification payload should deep-link into the charge-limit flow on the Dashboard
-
-### Remote Access
-- Tailscale — same IP approach, no app code changes needed
+- Tailscale — same IP approach as the local network, no app code changes needed.

@@ -2,7 +2,7 @@
 
 ## Purpose
 This app provides a custom iOS interface for a go-e Wallbox home EV charger.
-It replaces manual iOS Shortcuts with a native UI and adds push notification support for charging initiation.
+It replaces manual iOS Shortcuts with a native UI.
 
 ## Hardware
 - **Device**: go-e Charger
@@ -101,28 +101,6 @@ If `deltaSOC ≤ 0` (target already reached) or `chargingEnergyFactor ≤ 0`, th
 - Wallbox IP address
 - Battery capacity (kWh)
 - Charging energy factor
-
----
-
-## Post-MVP: Push Notification Flow
-
-### Trigger
-Wallbox `car` status changes from 1 (idle) → 2/3 (plugged in)
-
-### Architecture
-```
-Synology NAS
-  └── Python poller (every 15–20s)
-      └── detects plug-in event
-          └── HTTP POST → Supabase Edge Function
-              └── sends APNs push notification → iPhone
-                  └── user opens app, enters SOC, starts charging
-```
-
-### Notes
-- iPhone may be offline (no signal) on arrival → APNs queues notification, delivered on WiFi connect
-- APNs retains notifications up to 30 days
-- Supabase also used for charging session history (post-MVP)
 
 ---
 

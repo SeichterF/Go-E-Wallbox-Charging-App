@@ -180,11 +180,6 @@ Official go-e enum: `Unknown/Error=0, Idle=1, Charging=2, WaitCar=3, Complete=4,
 ### In Progress
 - Feature 3 (remaining part): settings validation hardening.
 
-### Backlog (post-MVP)
-- Push notifications on plug-in event (Synology poller → Supabase → APNs).
-- Charging session history via Supabase Postgres.
-- Deep link from notification into the charge-limit flow on the Dashboard.
-
 ---
 
 ## Git Workflow

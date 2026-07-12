@@ -51,7 +51,9 @@ in the service layer.
   charging energy factor).
 
 ### AppSettings
-- `@Observable`, in-memory (persistence via `@AppStorage` is planned — Feature 3).
+- `@Observable`; persists every change via `didSet` to iCloud Key-Value Store + UserDefaults
+  (read fallback chain: iCloud → UserDefaults → default; both stores injectable for tests —
+  see the AppSettings section in `CLAUDE.md`).
 - Single source of truth for `chargerIP`, `batterySizeKWh`, `targetSOCPercent`,
   `chargingEnergyFactor`, `pollingIntervalSeconds`, and the SOC bounds
   (`minSOCPercent`, `maxSOCPercent`, `socStepPercent`).

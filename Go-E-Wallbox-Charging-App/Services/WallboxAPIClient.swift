@@ -99,11 +99,14 @@ struct WallboxAPIClient {
         guard let cardsArray = cardsValue as? [Any] else { return [] }
         return cardsArray.enumerated().compactMap { index, item -> RFIDCard? in
             guard let card = item as? [String: Any],
-                  let name = card["name"] as? String,
-                  !name.trimmingCharacters(in: .whitespaces).isEmpty else {
+                  let name = card["name"] as? String else {
                 return nil
             }
-            return RFIDCard(id: index, name: name)
+            let trimmed = name.trimmingCharacters(in: .whitespaces)
+            guard !trimmed.isEmpty, trimmed.caseInsensitiveCompare("N/A") != .orderedSame else {
+                return nil
+            }
+            return RFIDCard(id: index, name: trimmed)
         }
     }
 

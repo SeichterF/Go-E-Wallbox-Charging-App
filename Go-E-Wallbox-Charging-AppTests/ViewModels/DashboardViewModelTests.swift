@@ -371,6 +371,56 @@ struct DashboardViewModelTests {
         #expect(viewModel.targetSOCValidationError == nil)
         #expect(viewModel.targetSOCText == "85")
     }
+
+    @MainActor
+    @Test
+    func startChargingFallsBackToNoUserWhenSelectedCardNoLongerExists() async {
+        let appSettings = AppSettings()
+        appSettings.selectedCardIndex = 3 // stale index, no longer reported by the wallbox
+        let service = StartChargingServiceMock(
+            status: WallboxStatus(
+                isConnected: true,
+                connectionState: .waiting,
+                chargingPowerW: 0,
+                energyPerDayWh: 0,
+                chargeLimitWh: 0,
+                forceState: 0,
+                activeTransaction: -1,
+                availableCards: [RFIDCard(id: 0, name: "Alice")]
+            )
+        )
+        let viewModel = DashboardViewModel(service: service, settings: appSettings)
+        await viewModel.refreshStatus()
+
+        await viewModel.startCharging()
+
+        #expect(service.lastStartedCardIndex == -1)
+    }
+
+    @MainActor
+    @Test
+    func startChargingUsesSelectedCardIndexWhenValid() async {
+        let appSettings = AppSettings()
+        appSettings.selectedCardIndex = 0
+        let service = StartChargingServiceMock(
+            status: WallboxStatus(
+                isConnected: true,
+                connectionState: .waiting,
+                chargingPowerW: 0,
+                energyPerDayWh: 0,
+                chargeLimitWh: 0,
+                forceState: 0,
+                activeTransaction: -1,
+                availableCards: [RFIDCard(id: 0, name: "Alice")]
+            )
+        )
+        let viewModel = DashboardViewModel(service: service, settings: appSettings)
+        await viewModel.refreshStatus()
+
+        await viewModel.startCharging()
+
+        #expect(service.lastStartedCardIndex == 0)
+    }
 }
 
 private struct DashboardServiceMock: WallboxServiceProtocol {
@@ -382,6 +432,27 @@ private struct DashboardServiceMock: WallboxServiceProtocol {
 
     func updateChargingSettings(_: ChargingSettings) async throws {}
     func startCharging(cardIndex: Int) async throws {}
+    func stopCharging() async throws {}
+}
+
+private final class StartChargingServiceMock: WallboxServiceProtocol {
+    private(set) var lastStartedCardIndex: Int?
+    private let status: WallboxStatus
+
+    init(status: WallboxStatus) {
+        self.status = status
+    }
+
+    func fetchStatus() async throws -> WallboxStatus {
+        status
+    }
+
+    func updateChargingSettings(_: ChargingSettings) async throws {}
+
+    func startCharging(cardIndex: Int) async throws {
+        lastStartedCardIndex = cardIndex
+    }
+
     func stopCharging() async throws {}
 }
 

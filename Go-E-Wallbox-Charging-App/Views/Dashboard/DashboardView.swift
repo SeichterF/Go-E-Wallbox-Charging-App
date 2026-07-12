@@ -17,10 +17,8 @@ struct DashboardView: View {
             ScrollView {
                 VStack(spacing: 16) {
                     statusCard
-                    if viewModel.status.isConnected {
-                        chargingControlCard
-                    }
                     chargeLimitCard
+                    chargingControlCard
                     if let errorMessage = viewModel.errorMessage {
                         Text(errorMessage)
                             .foregroundStyle(.red)
@@ -118,6 +116,14 @@ struct DashboardView: View {
 
     private var chargingControlCard: some View {
         VStack(spacing: 12) {
+            Picker(AppConstants.UI.dashboardRFIDUserLabel, selection: $viewModel.selectedCardIndex) {
+                Text(AppConstants.UI.dashboardNoUserOption).tag(-1)
+                ForEach(viewModel.availableCards) { card in
+                    Text(card.name).tag(card.id)
+                }
+            }
+            .pickerStyle(.menu)
+
             if viewModel.isForceCharging {
                 Button(AppConstants.UI.dashboardStopCharging) {
                     Task { await viewModel.stopCharging() }
@@ -131,13 +137,7 @@ struct DashboardView: View {
                 }
                 .buttonStyle(.borderedProminent)
                 .frame(maxWidth: .infinity)
-                .disabled(viewModel.isLoading)
-            }
-
-            if let cardName = viewModel.selectedCardName {
-                Text(String(format: AppConstants.UI.dashboardChargingAsFormat, cardName))
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                .disabled(viewModel.isLoading || !viewModel.status.isConnected)
             }
         }
         .padding()

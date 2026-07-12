@@ -104,14 +104,29 @@ final class DashboardViewModel {
         status.isConnected && !isForceCharging
     }
 
-    var selectedCardName: String? {
-        settings.availableCards.first(where: { $0.id == settings.selectedCardIndex })?.name
+    var availableCards: [RFIDCard] {
+        settings.availableCards
+    }
+
+    var selectedCardIndex: Int {
+        get { settings.selectedCardIndex }
+        set { settings.selectedCardIndex = newValue }
+    }
+
+    /// `selectedCardIndex` validated against the currently known cards; falls back to `-1`
+    /// ("no user") if the stored index no longer matches a card the wallbox reports.
+    private var effectiveCardIndex: Int {
+        guard settings.selectedCardIndex >= 0,
+              settings.availableCards.contains(where: { $0.id == settings.selectedCardIndex }) else {
+            return -1
+        }
+        return settings.selectedCardIndex
     }
 
     func startCharging() async {
         isLoading = true
         errorMessage = nil
-        let cardIndex = settings.availableCards.isEmpty ? -1 : settings.selectedCardIndex
+        let cardIndex = effectiveCardIndex
         do {
             try await service.startCharging(cardIndex: cardIndex)
             status = try await service.fetchStatus()

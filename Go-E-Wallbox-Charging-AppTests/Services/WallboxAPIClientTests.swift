@@ -116,6 +116,19 @@ struct WallboxAPIClientTests {
         }
     }
 
+    // MARK: - cards parsing
+
+    @Test
+    func fetchStatusFiltersOutEmptyAndNAPlaceholderCardNames() async throws {
+        let client = makeClient(
+            json: #"{"car": 1, "cards": [{"name": "Alice"}, {"name": ""}, {"name": "n/a"}, {"name": "Bob"}]}"#
+        )
+
+        let status = try await client.fetchStatus()
+
+        #expect(status.availableCards.map(\.name) == ["Alice", "Bob"])
+    }
+
     // MARK: - setChargeEnergyLimitWh
 
     @Test

@@ -132,10 +132,9 @@ Settings persist via **iCloud Key-Value Store + UserDefaults**. Read fallback ch
 
 ## go-e API Conventions
 
-- Base URL: `http://<chargerIP>/api/` — always from `AppSettings.apiBaseURLString`.
-- Status endpoint: `GET /api/status`
-- Set endpoint: `GET /api/set?<key>=<value>`
-- Charge-limit field: `dwo` in **Wh** (multiply kWh × 1000 — never send kWh directly).
+Base URL, endpoints, and status fields: see [`CONTEXT.md`](CONTEXT.md) for the full reference.
+
+- Charge-limit field `dwo` is always sent in **Wh**, computed via `ChargingSettings.computedChargeLimitWh` (see CONTEXT.md for the formula) — never send raw kWh.
 - Always refresh status after a successful SET call.
 - Polling interval: 15–20 seconds (from `AppSettings.pollingIntervalSeconds`).
 

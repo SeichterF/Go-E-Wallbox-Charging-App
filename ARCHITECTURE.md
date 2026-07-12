@@ -77,9 +77,3 @@ is active → `fetchStatus()` every 15 s → UI updates.
 **Charge-limit update:** user drags the current-SOC or target-SOC dot on the progress
 bar (or types a value) → 450 ms debounce → `updateChargingSettings()` sends `dwo` →
 status is refreshed to confirm the change.
-
----
-
-## Remote Access
-
-- Tailscale — same IP approach as the local network, no app code changes needed.

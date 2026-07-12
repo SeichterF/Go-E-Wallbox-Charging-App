@@ -1,3 +1,4 @@
+import Foundation
 import Testing
 @testable import Go_E_Wallbox_Charging_App
 
@@ -27,6 +28,19 @@ struct DashboardViewModelTests {
 
     @MainActor
     @Test
+    func refreshStatusSurfacesErrorMessageOnFailure() async {
+        let service = DashboardServiceMock(result: .failure(URLError(.badServerResponse)))
+        let viewModel = DashboardViewModel(service: service, settings: AppSettings())
+
+        await viewModel.refreshStatus()
+
+        #expect(viewModel.errorMessage != nil)
+        #expect(viewModel.isLoading == false)
+        #expect(viewModel.status == .placeholder)
+    }
+
+    @MainActor
+    @Test
     func synchronizeChargeLimitUpdatesWallboxLimitAndRefreshesStatus() async {
         let appSettings = AppSettings()
         appSettings.targetSOCPercent = 80
@@ -43,6 +57,210 @@ struct DashboardViewModelTests {
         #expect(viewModel.status.chargeLimitWh == 15351)
         #expect(viewModel.errorMessage == nil)
         #expect(viewModel.isLoading == false)
+    }
+
+    @MainActor
+    @Test
+    func synchronizeChargeLimitSurfacesErrorAndRetriesAfterFailure() async {
+        let service = ApplyChargeLimitServiceMock()
+        service.updateError = URLError(.notConnectedToInternet)
+        let viewModel = DashboardViewModel(service: service, settings: AppSettings())
+        viewModel.currentSOCText = "37"
+
+        await viewModel.synchronizeChargeLimitWithWallbox()
+
+        #expect(viewModel.errorMessage != nil)
+        #expect(service.updateCallCount == 1)
+
+        // A failed sync must not be recorded as synced — the next call retries.
+        service.updateError = nil
+        await viewModel.synchronizeChargeLimitWithWallbox()
+
+        #expect(service.updateCallCount == 2)
+        #expect(viewModel.errorMessage == nil)
+    }
+
+    @MainActor
+    @Test
+    func synchronizeChargeLimitSkipsWallboxCallWhenNothingChanged() async {
+        let service = ApplyChargeLimitServiceMock()
+        let viewModel = DashboardViewModel(service: service, settings: AppSettings())
+        viewModel.currentSOCText = "37"
+
+        await viewModel.synchronizeChargeLimitWithWallbox()
+        await viewModel.synchronizeChargeLimitWithWallbox()
+
+        #expect(service.updateCallCount == 1)
+
+        viewModel.currentSOCText = "40"
+        await viewModel.synchronizeChargeLimitWithWallbox()
+
+        #expect(service.updateCallCount == 2)
+    }
+
+    @MainActor
+    @Test
+    func firstRefreshInitializesCurrentSOCFromWallboxChargeLimit() async {
+        let appSettings = AppSettings()
+        appSettings.targetSOCPercent = 80
+        appSettings.batterySizeKWh = 42
+        appSettings.chargingEnergyFactor = 0.85
+
+        // dwo 15351 Wh at 42 kWh × 0.85 implies 43 SOC points → current SOC 80 − 43 = 37.
+        let service = ApplyChargeLimitServiceMock(
+            initialStatus: WallboxStatus(
+                isConnected: true,
+                connectionState: .waiting,
+                chargingPowerW: 0,
+                energyPerDayWh: 0,
+                chargeLimitWh: 15351
+            )
+        )
+        let viewModel = DashboardViewModel(service: service, settings: appSettings)
+
+        await viewModel.refreshStatus()
+        #expect(viewModel.currentSOCText == "37")
+
+        // The initialized value counts as synced — no redundant wallbox write.
+        await viewModel.synchronizeChargeLimitWithWallbox()
+        #expect(service.updateCallCount == 0)
+
+        // Only the first refresh initializes; user input survives later refreshes.
+        viewModel.currentSOCText = "50"
+        await viewModel.refreshStatus()
+        #expect(viewModel.currentSOCText == "50")
+    }
+
+    @MainActor
+    @Test
+    func firstRefreshWithoutChargeLimitLeavesCurrentSOCUntouched() async {
+        let service = ApplyChargeLimitServiceMock()
+        let viewModel = DashboardViewModel(service: service, settings: AppSettings())
+
+        await viewModel.refreshStatus()
+
+        #expect(viewModel.currentSOCText == "0")
+    }
+
+    @MainActor
+    @Test
+    func currentSOCInputSanitizesDigitsAndValidatesRange() {
+        let service = DashboardServiceMock(result: .success(.placeholder))
+        let viewModel = DashboardViewModel(service: service, settings: AppSettings())
+
+        viewModel.replaceCurrentSOCTextWithSanitizedUserInput("1a5")
+        #expect(viewModel.currentSOCText == "15")
+        #expect(viewModel.socValidationError == nil)
+
+        viewModel.replaceCurrentSOCTextWithSanitizedUserInput("150")
+        #expect(viewModel.socValidationError != nil)
+        #expect(viewModel.parsedCurrentSOCPercent == 100)
+
+        viewModel.replaceCurrentSOCTextWithSanitizedUserInput("")
+        #expect(viewModel.currentSOCText.isEmpty)
+        #expect(viewModel.socFieldIsCleared)
+        #expect(viewModel.parsedCurrentSOCPercent == 0)
+
+        viewModel.replaceCurrentSOCTextWithSanitizedUserInput("007")
+        #expect(viewModel.currentSOCText == "7")
+    }
+
+    @MainActor
+    @Test
+    func beginAndEndEditingRestorePreviousValueWhenFieldStaysEmpty() {
+        let service = DashboardServiceMock(result: .success(.placeholder))
+        let viewModel = DashboardViewModel(service: service, settings: AppSettings())
+        viewModel.currentSOCText = "37"
+
+        viewModel.beginEditing()
+        #expect(viewModel.currentSOCText.isEmpty)
+        #expect(viewModel.socFieldIsCleared)
+
+        viewModel.endEditing()
+        #expect(viewModel.currentSOCText == "37")
+        #expect(viewModel.socFieldIsCleared == false)
+
+        viewModel.beginEditing()
+        viewModel.replaceCurrentSOCTextWithSanitizedUserInput("55")
+        viewModel.endEditing()
+        #expect(viewModel.currentSOCText == "55")
+    }
+
+    @MainActor
+    @Test
+    func updateCurrentSOCDragSnapsToStepAndClampsToRange() {
+        let service = DashboardServiceMock(result: .success(.placeholder))
+        let viewModel = DashboardViewModel(service: service, settings: AppSettings())
+
+        viewModel.updateCurrentSOCDrag(fraction: 0.63)
+        #expect(viewModel.currentSOCDragValue == 65)
+        #expect(viewModel.displayedCurrentSOCPercent == 65)
+        #expect(viewModel.currentSOCText == "65")
+
+        viewModel.updateCurrentSOCDrag(fraction: -0.1)
+        #expect(viewModel.displayedCurrentSOCPercent == 0)
+
+        viewModel.updateCurrentSOCDrag(fraction: 1.2)
+        #expect(viewModel.displayedCurrentSOCPercent == 100)
+
+        viewModel.commitCurrentSOCDrag()
+        #expect(viewModel.currentSOCDragValue == nil)
+        #expect(viewModel.currentSOCText == "100")
+    }
+
+    @MainActor
+    @Test
+    func calculatedCurrentSOCPercentAddsChargedEnergyToParsedSOC() async {
+        let appSettings = AppSettings()
+        appSettings.batterySizeKWh = 42
+        appSettings.chargingEnergyFactor = 0.85
+
+        // 10 kWh charged × 0.85 = 8.5 kWh stored → 8.5/42 ≈ 20 SOC points.
+        let service = DashboardServiceMock(
+            result: .success(
+                WallboxStatus(
+                    isConnected: true,
+                    connectionState: .charging,
+                    chargingPowerW: 11000,
+                    energyPerDayWh: 10000,
+                    chargeLimitWh: 0
+                )
+            )
+        )
+        let viewModel = DashboardViewModel(service: service, settings: appSettings)
+        viewModel.currentSOCText = "37"
+
+        await viewModel.refreshStatus()
+
+        #expect(viewModel.calculatedCurrentSOCPercent == 57)
+    }
+
+    @MainActor
+    @Test
+    func calculatedCurrentSOCPercentClampsToHundredAndHandlesZeroBattery() async {
+        let appSettings = AppSettings()
+        appSettings.batterySizeKWh = 42
+        appSettings.chargingEnergyFactor = 0.85
+
+        let service = DashboardServiceMock(
+            result: .success(
+                WallboxStatus(
+                    isConnected: true,
+                    connectionState: .charging,
+                    chargingPowerW: 11000,
+                    energyPerDayWh: 200_000,
+                    chargeLimitWh: 0
+                )
+            )
+        )
+        let viewModel = DashboardViewModel(service: service, settings: appSettings)
+        viewModel.currentSOCText = "37"
+
+        await viewModel.refreshStatus()
+        #expect(viewModel.calculatedCurrentSOCPercent == 100)
+
+        appSettings.batterySizeKWh = 0
+        #expect(viewModel.calculatedCurrentSOCPercent == 37)
     }
 
     @MainActor
@@ -129,19 +347,31 @@ private struct DashboardServiceMock: WallboxServiceProtocol {
 
 private final class ApplyChargeLimitServiceMock: WallboxServiceProtocol {
     private(set) var lastAppliedChargeLimitWh: Int?
-    private var status = WallboxStatus(
-        isConnected: true,
-        connectionState: .waiting,
-        chargingPowerW: 0,
-        energyPerDayWh: 0,
-        chargeLimitWh: 0
-    )
+    private(set) var updateCallCount = 0
+    var updateError: Error?
+    private var status: WallboxStatus
+
+    init(
+        initialStatus: WallboxStatus = WallboxStatus(
+            isConnected: true,
+            connectionState: .waiting,
+            chargingPowerW: 0,
+            energyPerDayWh: 0,
+            chargeLimitWh: 0
+        )
+    ) {
+        self.status = initialStatus
+    }
 
     func fetchStatus() async throws -> WallboxStatus {
         status
     }
 
     func updateChargingSettings(_ chargingSettings: ChargingSettings) async throws {
+        updateCallCount += 1
+        if let updateError {
+            throw updateError
+        }
         let limit = chargingSettings.computedChargeLimitWh
         lastAppliedChargeLimitWh = limit
         status = WallboxStatus(

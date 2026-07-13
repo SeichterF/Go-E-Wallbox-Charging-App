@@ -115,7 +115,23 @@ struct DashboardView: View {
     }
 
     private var chargingControlCard: some View {
-        VStack(spacing: 12) {
+        HStack(spacing: 12) {
+            if viewModel.isForceCharging {
+                Button(AppConstants.UI.dashboardStopCharging) {
+                    Task { await viewModel.stopCharging() }
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(.red)
+            } else {
+                Button(AppConstants.UI.dashboardStartCharging) {
+                    Task { await viewModel.startCharging() }
+                }
+                .buttonStyle(.borderedProminent)
+                .disabled(viewModel.isLoading || !viewModel.status.isConnected)
+            }
+
+            Spacer()
+
             Picker(AppConstants.UI.dashboardRFIDUserLabel, selection: $viewModel.selectedCardIndex) {
                 Text(AppConstants.UI.dashboardNoUserOption).tag(-1)
                 ForEach(viewModel.availableCards) { card in
@@ -123,22 +139,6 @@ struct DashboardView: View {
                 }
             }
             .pickerStyle(.menu)
-
-            if viewModel.isForceCharging {
-                Button(AppConstants.UI.dashboardStopCharging) {
-                    Task { await viewModel.stopCharging() }
-                }
-                .buttonStyle(.borderedProminent)
-                .tint(.red)
-                .frame(maxWidth: .infinity)
-            } else {
-                Button(AppConstants.UI.dashboardStartCharging) {
-                    Task { await viewModel.startCharging() }
-                }
-                .buttonStyle(.borderedProminent)
-                .frame(maxWidth: .infinity)
-                .disabled(viewModel.isLoading || !viewModel.status.isConnected)
-            }
         }
         .padding()
         .background(.background, in: RoundedRectangle(cornerRadius: 16))

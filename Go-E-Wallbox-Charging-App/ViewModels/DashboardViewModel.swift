@@ -8,6 +8,8 @@ final class DashboardViewModel {
     private let settings: AppSettings
 
     private static let wallboxSyncDebounceNanoseconds: UInt64 = 450_000_000
+    private static let burstIntervalSeconds: TimeInterval = 1.0
+    private static let burstDurationSeconds: TimeInterval = 15.0
 
     var isLoading = false
     var errorMessage: String?
@@ -33,6 +35,8 @@ final class DashboardViewModel {
     private var lastSyncedSOC: Int?
     private var lastSyncedLimitWh: Int?
     private var needsInitializationFromWallbox = true
+    private var burstDeadline: Date?
+    private var pollingSleepTask: Task<Void, Never>?
 
     init(service: WallboxServiceProtocol, settings: AppSettings) {
         self.service = service
@@ -83,17 +87,40 @@ final class DashboardViewModel {
         return min(100, parsedCurrentSOCPercent + Int(socGain.rounded()))
     }
 
+    /// Active poll interval: fast burst interval while a start/stop transition settles, otherwise the configured interval.
+    var currentPollingIntervalSeconds: TimeInterval {
+        if let deadline = burstDeadline, deadline > Date() {
+            return Self.burstIntervalSeconds
+        }
+        return settings.pollingIntervalSeconds
+    }
+
     func startPolling() async {
         needsInitializationFromWallbox = true
         while !Task.isCancelled {
             await refreshStatus()
             guard !Task.isCancelled else { break }
-            do {
-                try await Task.sleep(for: .seconds(settings.pollingIntervalSeconds))
-            } catch {
-                break
+            let sleepTask = Task {
+                do {
+                    try await Task.sleep(for: .seconds(currentPollingIntervalSeconds))
+                } catch {
+                    // Sleep was cancelled (burst trigger or scene teardown) — loop reacts on next iteration.
+                }
+            }
+            pollingSleepTask = sleepTask
+            await withTaskCancellationHandler {
+                await sleepTask.value
+            } onCancel: {
+                sleepTask.cancel()
             }
         }
+    }
+
+    /// Polls at the fast burst interval for a short window so the button and power readout
+    /// track the wallbox's delayed `car`-state change after a start/stop action.
+    private func beginBurstRefresh() {
+        burstDeadline = Date().addingTimeInterval(Self.burstDurationSeconds)
+        pollingSleepTask?.cancel()
     }
 
     var isForceCharging: Bool {
@@ -108,25 +135,31 @@ final class DashboardViewModel {
         settings.availableCards
     }
 
+    /// Picker binding: getter resolves the default/stale state to a concrete selection so the
+    /// menu highlights it; setter stores the user's explicit choice.
     var selectedCardIndex: Int {
-        get { settings.selectedCardIndex }
+        get { resolvedCardIndex }
         set { settings.selectedCardIndex = newValue }
     }
 
-    /// `selectedCardIndex` validated against the currently known cards; falls back to `-1`
-    /// ("no user") if the stored index no longer matches a card the wallbox reports.
-    private var effectiveCardIndex: Int {
-        guard settings.selectedCardIndex >= 0,
-              settings.availableCards.contains(where: { $0.id == settings.selectedCardIndex }) else {
+    /// The stored selection resolved against the currently known cards:
+    /// a valid card id stays; `-1` means the user explicitly chose "no user";
+    /// anything else (default sentinel `-2` or a stale index) defaults to the first card, or `-1` if none exist.
+    private var resolvedCardIndex: Int {
+        if settings.selectedCardIndex >= 0,
+           settings.availableCards.contains(where: { $0.id == settings.selectedCardIndex }) {
+            return settings.selectedCardIndex
+        }
+        if settings.selectedCardIndex == -1 {
             return -1
         }
-        return settings.selectedCardIndex
+        return settings.availableCards.first?.id ?? -1
     }
 
     func startCharging() async {
         isLoading = true
         errorMessage = nil
-        let cardIndex = effectiveCardIndex
+        let cardIndex = resolvedCardIndex
         do {
             try await service.startCharging(cardIndex: cardIndex)
             status = try await service.fetchStatus()
@@ -134,6 +167,7 @@ final class DashboardViewModel {
             errorMessage = error.localizedDescription
         }
         isLoading = false
+        beginBurstRefresh()
     }
 
     func stopCharging() async {
@@ -146,6 +180,7 @@ final class DashboardViewModel {
             errorMessage = error.localizedDescription
         }
         isLoading = false
+        beginBurstRefresh()
     }
 
     func refreshStatus() async {

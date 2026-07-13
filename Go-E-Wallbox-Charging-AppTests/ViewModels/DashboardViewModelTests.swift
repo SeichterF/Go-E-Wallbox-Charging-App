@@ -374,21 +374,39 @@ struct DashboardViewModelTests {
 
     @MainActor
     @Test
-    func startChargingFallsBackToNoUserWhenSelectedCardNoLongerExists() async {
+    func startChargingFallsBackToFirstCardWhenSelectedCardNoLongerExists() async {
         let appSettings = AppSettings()
         appSettings.selectedCardIndex = 3 // stale index, no longer reported by the wallbox
+        let service = StartChargingServiceMock(status: makeConnectedStatus(cards: [RFIDCard(id: 0, name: "Alice")]))
+        let viewModel = DashboardViewModel(service: service, settings: appSettings)
+        await viewModel.refreshStatus()
+
+        await viewModel.startCharging()
+
+        #expect(service.lastStartedCardIndex == 0)
+    }
+
+    @MainActor
+    @Test
+    func startChargingDefaultsToFirstCardWhenNothingSelected() async {
+        let appSettings = AppSettings() // default selectedCardIndex == -2 (auto)
         let service = StartChargingServiceMock(
-            status: WallboxStatus(
-                isConnected: true,
-                connectionState: .waiting,
-                chargingPowerW: 0,
-                energyPerDayWh: 0,
-                chargeLimitWh: 0,
-                forceState: 0,
-                activeTransaction: -1,
-                availableCards: [RFIDCard(id: 0, name: "Alice")]
-            )
+            status: makeConnectedStatus(cards: [RFIDCard(id: 0, name: "Alice"), RFIDCard(id: 1, name: "Bob")])
         )
+        let viewModel = DashboardViewModel(service: service, settings: appSettings)
+        await viewModel.refreshStatus()
+
+        await viewModel.startCharging()
+
+        #expect(service.lastStartedCardIndex == 0)
+    }
+
+    @MainActor
+    @Test
+    func startChargingUsesNoUserWhenExplicitlySelected() async {
+        let appSettings = AppSettings()
+        appSettings.selectedCardIndex = -1 // explicit "no user"
+        let service = StartChargingServiceMock(status: makeConnectedStatus(cards: [RFIDCard(id: 0, name: "Alice")]))
         let viewModel = DashboardViewModel(service: service, settings: appSettings)
         await viewModel.refreshStatus()
 
@@ -402,18 +420,7 @@ struct DashboardViewModelTests {
     func startChargingUsesSelectedCardIndexWhenValid() async {
         let appSettings = AppSettings()
         appSettings.selectedCardIndex = 0
-        let service = StartChargingServiceMock(
-            status: WallboxStatus(
-                isConnected: true,
-                connectionState: .waiting,
-                chargingPowerW: 0,
-                energyPerDayWh: 0,
-                chargeLimitWh: 0,
-                forceState: 0,
-                activeTransaction: -1,
-                availableCards: [RFIDCard(id: 0, name: "Alice")]
-            )
-        )
+        let service = StartChargingServiceMock(status: makeConnectedStatus(cards: [RFIDCard(id: 0, name: "Alice")]))
         let viewModel = DashboardViewModel(service: service, settings: appSettings)
         await viewModel.refreshStatus()
 
@@ -421,6 +428,45 @@ struct DashboardViewModelTests {
 
         #expect(service.lastStartedCardIndex == 0)
     }
+
+    @MainActor
+    @Test
+    func startChargingEntersFastBurstPolling() async {
+        let appSettings = AppSettings()
+        appSettings.pollingIntervalSeconds = 15
+        let service = StartChargingServiceMock(status: makeConnectedStatus(cards: []))
+        let viewModel = DashboardViewModel(service: service, settings: appSettings)
+
+        #expect(viewModel.currentPollingIntervalSeconds == 15)
+
+        await viewModel.startCharging()
+        #expect(viewModel.currentPollingIntervalSeconds == 1)
+    }
+
+    @MainActor
+    @Test
+    func stopChargingEntersFastBurstPolling() async {
+        let appSettings = AppSettings()
+        appSettings.pollingIntervalSeconds = 15
+        let service = StartChargingServiceMock(status: makeConnectedStatus(cards: []))
+        let viewModel = DashboardViewModel(service: service, settings: appSettings)
+
+        await viewModel.stopCharging()
+        #expect(viewModel.currentPollingIntervalSeconds == 1)
+    }
+}
+
+private func makeConnectedStatus(cards: [RFIDCard]) -> WallboxStatus {
+    WallboxStatus(
+        isConnected: true,
+        connectionState: .waiting,
+        chargingPowerW: 0,
+        energyPerDayWh: 0,
+        chargeLimitWh: 0,
+        forceState: 0,
+        activeTransaction: -1,
+        availableCards: cards
+    )
 }
 
 private struct DashboardServiceMock: WallboxServiceProtocol {

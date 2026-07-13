@@ -26,7 +26,7 @@ final class AppSettings {
         static let targetSOCPercent = 80
         static let chargingEnergyFactor = 0.85
         static let pollingIntervalSeconds: TimeInterval = 15.0
-        static let selectedCardIndex = -1
+        static let selectedCardIndex = -2 // -2 = auto (first card); -1 = explicit "no user"; >=0 = card id
     }
 
     @ObservationIgnored private let defaults: UserDefaults

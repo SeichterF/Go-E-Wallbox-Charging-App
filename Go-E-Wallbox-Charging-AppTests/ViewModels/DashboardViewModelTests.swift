@@ -13,7 +13,10 @@ struct DashboardViewModelTests {
                     connectionState: .charging,
                     chargingPowerW: 11000,
                     energyPerDayWh: 23000,
-                    chargeLimitWh: 0
+                    chargeLimitWh: 0,
+                    forceState: 0,
+                    activeTransaction: -1,
+                    availableCards: []
                 )
             )
         )
@@ -24,6 +27,32 @@ struct DashboardViewModelTests {
         #expect(viewModel.status.isConnected)
         #expect(viewModel.errorMessage == nil)
         #expect(viewModel.isLoading == false)
+    }
+
+    @MainActor
+    @Test
+    func isForceChargingReflectsActiveChargingSessionEvenWithoutForceState() async {
+        // A session started via a physical RFID card leaves `frc` at 0 even while `car` reports charging.
+        let service = DashboardServiceMock(
+            result: .success(
+                WallboxStatus(
+                    isConnected: true,
+                    connectionState: .charging,
+                    chargingPowerW: 11000,
+                    energyPerDayWh: 5000,
+                    chargeLimitWh: 0,
+                    forceState: 0,
+                    activeTransaction: -1,
+                    availableCards: []
+                )
+            )
+        )
+        let viewModel = DashboardViewModel(service: service, settings: AppSettings())
+
+        await viewModel.refreshStatus()
+
+        #expect(viewModel.isForceCharging)
+        #expect(viewModel.canStartCharging == false)
     }
 
     @MainActor
@@ -113,7 +142,10 @@ struct DashboardViewModelTests {
                 connectionState: .waiting,
                 chargingPowerW: 0,
                 energyPerDayWh: 0,
-                chargeLimitWh: 15351
+                chargeLimitWh: 15351,
+                forceState: 0,
+                activeTransaction: -1,
+                availableCards: []
             )
         )
         let viewModel = DashboardViewModel(service: service, settings: appSettings)
@@ -223,7 +255,10 @@ struct DashboardViewModelTests {
                     connectionState: .charging,
                     chargingPowerW: 11000,
                     energyPerDayWh: 10000,
-                    chargeLimitWh: 0
+                    chargeLimitWh: 0,
+                    forceState: 0,
+                    activeTransaction: -1,
+                    availableCards: []
                 )
             )
         )
@@ -249,7 +284,10 @@ struct DashboardViewModelTests {
                     connectionState: .charging,
                     chargingPowerW: 11000,
                     energyPerDayWh: 200_000,
-                    chargeLimitWh: 0
+                    chargeLimitWh: 0,
+                    forceState: 0,
+                    activeTransaction: -1,
+                    availableCards: []
                 )
             )
         )
@@ -333,6 +371,102 @@ struct DashboardViewModelTests {
         #expect(viewModel.targetSOCValidationError == nil)
         #expect(viewModel.targetSOCText == "85")
     }
+
+    @MainActor
+    @Test
+    func startChargingFallsBackToFirstCardWhenSelectedCardNoLongerExists() async {
+        let appSettings = AppSettings()
+        appSettings.selectedCardIndex = 3 // stale index, no longer reported by the wallbox
+        let service = StartChargingServiceMock(status: makeConnectedStatus(cards: [RFIDCard(id: 0, name: "Alice")]))
+        let viewModel = DashboardViewModel(service: service, settings: appSettings)
+        await viewModel.refreshStatus()
+
+        await viewModel.startCharging()
+
+        #expect(service.lastStartedCardIndex == 0)
+    }
+
+    @MainActor
+    @Test
+    func startChargingDefaultsToFirstCardWhenNothingSelected() async {
+        let appSettings = AppSettings() // default selectedCardIndex == -2 (auto)
+        let service = StartChargingServiceMock(
+            status: makeConnectedStatus(cards: [RFIDCard(id: 0, name: "Alice"), RFIDCard(id: 1, name: "Bob")])
+        )
+        let viewModel = DashboardViewModel(service: service, settings: appSettings)
+        await viewModel.refreshStatus()
+
+        await viewModel.startCharging()
+
+        #expect(service.lastStartedCardIndex == 0)
+    }
+
+    @MainActor
+    @Test
+    func startChargingUsesNoUserWhenExplicitlySelected() async {
+        let appSettings = AppSettings()
+        appSettings.selectedCardIndex = -1 // explicit "no user"
+        let service = StartChargingServiceMock(status: makeConnectedStatus(cards: [RFIDCard(id: 0, name: "Alice")]))
+        let viewModel = DashboardViewModel(service: service, settings: appSettings)
+        await viewModel.refreshStatus()
+
+        await viewModel.startCharging()
+
+        #expect(service.lastStartedCardIndex == -1)
+    }
+
+    @MainActor
+    @Test
+    func startChargingUsesSelectedCardIndexWhenValid() async {
+        let appSettings = AppSettings()
+        appSettings.selectedCardIndex = 0
+        let service = StartChargingServiceMock(status: makeConnectedStatus(cards: [RFIDCard(id: 0, name: "Alice")]))
+        let viewModel = DashboardViewModel(service: service, settings: appSettings)
+        await viewModel.refreshStatus()
+
+        await viewModel.startCharging()
+
+        #expect(service.lastStartedCardIndex == 0)
+    }
+
+    @MainActor
+    @Test
+    func startChargingEntersFastBurstPolling() async {
+        let appSettings = AppSettings()
+        appSettings.pollingIntervalSeconds = 15
+        let service = StartChargingServiceMock(status: makeConnectedStatus(cards: []))
+        let viewModel = DashboardViewModel(service: service, settings: appSettings)
+
+        #expect(viewModel.currentPollingIntervalSeconds == 15)
+
+        await viewModel.startCharging()
+        #expect(viewModel.currentPollingIntervalSeconds == 1)
+    }
+
+    @MainActor
+    @Test
+    func stopChargingEntersFastBurstPolling() async {
+        let appSettings = AppSettings()
+        appSettings.pollingIntervalSeconds = 15
+        let service = StartChargingServiceMock(status: makeConnectedStatus(cards: []))
+        let viewModel = DashboardViewModel(service: service, settings: appSettings)
+
+        await viewModel.stopCharging()
+        #expect(viewModel.currentPollingIntervalSeconds == 1)
+    }
+}
+
+private func makeConnectedStatus(cards: [RFIDCard]) -> WallboxStatus {
+    WallboxStatus(
+        isConnected: true,
+        connectionState: .waiting,
+        chargingPowerW: 0,
+        energyPerDayWh: 0,
+        chargeLimitWh: 0,
+        forceState: 0,
+        activeTransaction: -1,
+        availableCards: cards
+    )
 }
 
 private struct DashboardServiceMock: WallboxServiceProtocol {
@@ -343,6 +477,29 @@ private struct DashboardServiceMock: WallboxServiceProtocol {
     }
 
     func updateChargingSettings(_: ChargingSettings) async throws {}
+    func startCharging(cardIndex: Int) async throws {}
+    func stopCharging() async throws {}
+}
+
+private final class StartChargingServiceMock: WallboxServiceProtocol {
+    private(set) var lastStartedCardIndex: Int?
+    private let status: WallboxStatus
+
+    init(status: WallboxStatus) {
+        self.status = status
+    }
+
+    func fetchStatus() async throws -> WallboxStatus {
+        status
+    }
+
+    func updateChargingSettings(_: ChargingSettings) async throws {}
+
+    func startCharging(cardIndex: Int) async throws {
+        lastStartedCardIndex = cardIndex
+    }
+
+    func stopCharging() async throws {}
 }
 
 private final class ApplyChargeLimitServiceMock: WallboxServiceProtocol {
@@ -357,7 +514,10 @@ private final class ApplyChargeLimitServiceMock: WallboxServiceProtocol {
             connectionState: .waiting,
             chargingPowerW: 0,
             energyPerDayWh: 0,
-            chargeLimitWh: 0
+            chargeLimitWh: 0,
+            forceState: 0,
+            activeTransaction: -1,
+            availableCards: []
         )
     ) {
         self.status = initialStatus
@@ -379,7 +539,13 @@ private final class ApplyChargeLimitServiceMock: WallboxServiceProtocol {
             connectionState: status.connectionState,
             chargingPowerW: status.chargingPowerW,
             energyPerDayWh: status.energyPerDayWh,
-            chargeLimitWh: limit
+            chargeLimitWh: limit,
+            forceState: status.forceState,
+            activeTransaction: status.activeTransaction,
+            availableCards: status.availableCards
         )
     }
+
+    func startCharging(cardIndex: Int) async throws {}
+    func stopCharging() async throws {}
 }

@@ -63,3 +63,9 @@
 /* Validation */
 "soc_validation_error_max" = "Maximum is 100 %";
 "target_soc_validation_error_range" = "Range is %d–%d %%";
+
+/* Dashboard – charging control */
+"dashboard_start_charging" = "Start Charging";
+"dashboard_stop_charging" = "Stop Charging";
+"dashboard_rfid_user_label" = "User";
+"dashboard_no_user_option" = "No User";

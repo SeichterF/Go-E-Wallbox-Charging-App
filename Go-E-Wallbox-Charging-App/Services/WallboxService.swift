@@ -18,4 +18,17 @@ struct WallboxService: WallboxServiceProtocol {
         let dwoWh = chargingSettings.computedChargeLimitWh
         try await apiClient.setChargeEnergyLimitWh(dwoWh)
     }
+
+    /// Starts charging by setting the active transaction to `cardIndex` (0-based) and forcing on.
+    /// Pass `cardIndex = -1` to start without assigning a user.
+    func startCharging(cardIndex: Int) async throws {
+        if cardIndex >= 0 {
+            try await apiClient.setTransaction(cardIndex + 1)
+        }
+        try await apiClient.setForceState(2)
+    }
+
+    func stopCharging() async throws {
+        try await apiClient.setForceState(1)
+    }
 }

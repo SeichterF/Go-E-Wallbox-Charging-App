@@ -31,22 +31,40 @@ struct WallboxAPIClient {
         let chargingPowerW = Int(powerWFromNRG.rounded())
         let sessionEnergyWh = intValue(from: jsonObject["wh"]) ?? 0
         let chargeLimitWh = intValue(from: jsonObject["dwo"]) ?? 0
+        let forceState = intValue(from: jsonObject["frc"]) ?? 0
+        let activeTransaction = intValue(from: jsonObject["trx"]) ?? -1
+        let availableCards = parseCards(jsonObject["cards"])
 
         return WallboxStatus(
             isConnected: [.charging, .waiting, .complete].contains(connectionState),
             connectionState: connectionState,
             chargingPowerW: chargingPowerW,
             energyPerDayWh: sessionEnergyWh,
-            chargeLimitWh: chargeLimitWh
+            chargeLimitWh: chargeLimitWh,
+            forceState: forceState,
+            activeTransaction: activeTransaction,
+            availableCards: availableCards
         )
     }
 
     func setChargeEnergyLimitWh(_ dwoWh: Int) async throws {
+        try await setParameter(name: "dwo", value: String(dwoWh))
+    }
+
+    func setForceState(_ value: Int) async throws {
+        try await setParameter(name: "frc", value: String(value))
+    }
+
+    func setTransaction(_ index: Int) async throws {
+        try await setParameter(name: "trx", value: String(index))
+    }
+
+    private func setParameter(name: String, value: String) async throws {
         guard var components = URLComponents(string: "\(settings.apiBaseURLString)set") else {
             throw URLError(.badURL)
         }
 
-        components.queryItems = [URLQueryItem(name: "dwo", value: String(dwoWh))]
+        components.queryItems = [URLQueryItem(name: name, value: value)]
 
         guard let url = components.url else {
             throw URLError(.badURL)
@@ -74,6 +92,21 @@ struct WallboxAPIClient {
             return .complete
         default:
             return .unknown
+        }
+    }
+
+    private func parseCards(_ cardsValue: Any?) -> [RFIDCard] {
+        guard let cardsArray = cardsValue as? [Any] else { return [] }
+        return cardsArray.enumerated().compactMap { index, item -> RFIDCard? in
+            guard let card = item as? [String: Any],
+                  let name = card["name"] as? String else {
+                return nil
+            }
+            let trimmed = name.trimmingCharacters(in: .whitespaces)
+            guard !trimmed.isEmpty, trimmed.caseInsensitiveCompare("N/A") != .orderedSame else {
+                return nil
+            }
+            return RFIDCard(id: index, name: trimmed)
         }
     }
 

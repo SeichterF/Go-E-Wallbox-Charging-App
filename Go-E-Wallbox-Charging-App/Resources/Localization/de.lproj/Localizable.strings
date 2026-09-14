@@ -66,6 +66,7 @@
 
 /* Dashboard – charging control */
 "dashboard_start_charging" = "Laden starten";
+"start_charging_target_reached_error" = "Ziel-SOC bereits erreicht — bitte zuerst das Ziel anpassen.";
 "dashboard_stop_charging" = "Laden stoppen";
 "dashboard_rfid_user_label" = "Benutzer";
 "dashboard_no_user_option" = "Ohne Benutzer";

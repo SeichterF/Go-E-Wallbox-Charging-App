@@ -66,6 +66,7 @@
 
 /* Dashboard – charging control */
 "dashboard_start_charging" = "Start Charging";
+"start_charging_target_reached_error" = "Target SOC already reached — adjust the target before starting.";
 "dashboard_stop_charging" = "Stop Charging";
 "dashboard_rfid_user_label" = "User";
 "dashboard_no_user_option" = "No User";

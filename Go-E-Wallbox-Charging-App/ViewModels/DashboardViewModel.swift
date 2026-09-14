@@ -36,6 +36,7 @@ final class DashboardViewModel {
     private var lastSyncedLimitWh: Int?
     private var needsInitializationFromWallbox = true
     private var burstDeadline: Date?
+    private var startPendingUntil: Date?
     private var pollingSleepTask: Task<Void, Never>?
 
     init(service: WallboxServiceProtocol, settings: AppSettings) {
@@ -123,8 +124,19 @@ final class DashboardViewModel {
         pollingSleepTask?.cancel()
     }
 
+    /// True while a charging session is running or being started.
+    ///
+    /// `forceState == 2` only occurs for sessions forced elsewhere (e.g. the official go-e app);
+    /// this app starts with a neutral force state, so `startPendingUntil` bridges the seconds
+    /// between the Start action and the wallbox reporting `car == 2`.
     var isForceCharging: Bool {
-        status.connectionState == .charging || status.forceState == 2
+        if status.connectionState == .charging || status.forceState == 2 {
+            return true
+        }
+        if let startPendingUntil, startPendingUntil > Date() {
+            return true
+        }
+        return false
     }
 
     var canStartCharging: Bool {
@@ -157,12 +169,25 @@ final class DashboardViewModel {
     }
 
     func startCharging() async {
+        // A limit of 0 disables the wallbox limit entirely, which would start an unbounded
+        // charge — refuse instead of silently charging past the target.
+        let chargeLimitWh = chargingSettingsForApply.computedChargeLimitWh
+        guard chargeLimitWh > 0 else {
+            errorMessage = AppConstants.UI.startChargingTargetReachedError
+            return
+        }
+
         isLoading = true
         errorMessage = nil
         let cardIndex = resolvedCardIndex
         do {
-            try await service.startCharging(cardIndex: cardIndex)
+            try await service.startCharging(cardIndex: cardIndex, chargeLimitWh: chargeLimitWh)
             status = try await service.fetchStatus()
+            // The limit just went out with the start command; keep the debounced sync from
+            // immediately sending the identical value again.
+            lastSyncedSOC = parsedCurrentSOCPercent
+            lastSyncedLimitWh = chargeLimitWh
+            startPendingUntil = Date().addingTimeInterval(Self.burstDurationSeconds)
         } catch {
             errorMessage = error.localizedDescription
         }
@@ -173,6 +198,7 @@ final class DashboardViewModel {
     func stopCharging() async {
         isLoading = true
         errorMessage = nil
+        startPendingUntil = nil
         do {
             try await service.stopCharging()
             status = try await service.fetchStatus()

@@ -454,6 +454,72 @@ struct DashboardViewModelTests {
         await viewModel.stopCharging()
         #expect(viewModel.currentPollingIntervalSeconds == 1)
     }
+
+    @MainActor
+    @Test
+    func startChargingSendsComputedChargeLimitToWallbox() async {
+        let appSettings = AppSettings()
+        appSettings.batterySizeKWh = 42
+        appSettings.chargingEnergyFactor = 0.85
+        appSettings.targetSOCPercent = 80
+        let service = StartChargingServiceMock(status: makeConnectedStatus(cards: []))
+        let viewModel = DashboardViewModel(service: service, settings: appSettings)
+        viewModel.currentSOCText = "37"
+
+        await viewModel.startCharging()
+
+        #expect(service.lastStartedChargeLimitWh == 15351)
+    }
+
+    @MainActor
+    @Test
+    func startChargingRefusesWhenTargetSOCAlreadyReached() async {
+        // dwo = 0 disables the wallbox limit, so starting here would charge without any bound.
+        let appSettings = AppSettings()
+        appSettings.targetSOCPercent = 80
+        let service = StartChargingServiceMock(status: makeConnectedStatus(cards: []))
+        let viewModel = DashboardViewModel(service: service, settings: appSettings)
+        viewModel.currentSOCText = "80"
+
+        await viewModel.startCharging()
+
+        #expect(service.startCallCount == 0)
+        #expect(viewModel.errorMessage != nil)
+    }
+
+    @MainActor
+    @Test
+    func startChargingKeepsChargingStateWhileWallboxStillReportsWaiting() async {
+        // The wallbox needs a few seconds to flip `car` to Charging, and this app starts with a
+        // neutral force state — without the pending bridge the button would snap back to "Start".
+        let appSettings = AppSettings()
+        appSettings.targetSOCPercent = 80
+        let service = StartChargingServiceMock(status: makeConnectedStatus(cards: []))
+        let viewModel = DashboardViewModel(service: service, settings: appSettings)
+        viewModel.currentSOCText = "10"
+
+        #expect(viewModel.isForceCharging == false)
+
+        await viewModel.startCharging()
+
+        #expect(viewModel.isForceCharging)
+        #expect(viewModel.canStartCharging == false)
+    }
+
+    @MainActor
+    @Test
+    func startChargingSkipsRedundantDebouncedLimitSync() async {
+        let appSettings = AppSettings()
+        appSettings.targetSOCPercent = 80
+        let service = ApplyChargeLimitServiceMock()
+        let viewModel = DashboardViewModel(service: service, settings: appSettings)
+        viewModel.currentSOCText = "10"
+
+        await viewModel.startCharging()
+        await viewModel.synchronizeChargeLimitWithWallbox()
+
+        #expect(service.updateCallCount == 0)
+    }
 }
 
 private func makeConnectedStatus(cards: [RFIDCard]) -> WallboxStatus {
@@ -477,12 +543,14 @@ private struct DashboardServiceMock: WallboxServiceProtocol {
     }
 
     func updateChargingSettings(_: ChargingSettings) async throws {}
-    func startCharging(cardIndex: Int) async throws {}
+    func startCharging(cardIndex: Int, chargeLimitWh: Int) async throws {}
     func stopCharging() async throws {}
 }
 
 private final class StartChargingServiceMock: WallboxServiceProtocol {
     private(set) var lastStartedCardIndex: Int?
+    private(set) var lastStartedChargeLimitWh: Int?
+    private(set) var startCallCount = 0
     private let status: WallboxStatus
 
     init(status: WallboxStatus) {
@@ -495,8 +563,10 @@ private final class StartChargingServiceMock: WallboxServiceProtocol {
 
     func updateChargingSettings(_: ChargingSettings) async throws {}
 
-    func startCharging(cardIndex: Int) async throws {
+    func startCharging(cardIndex: Int, chargeLimitWh: Int) async throws {
         lastStartedCardIndex = cardIndex
+        lastStartedChargeLimitWh = chargeLimitWh
+        startCallCount += 1
     }
 
     func stopCharging() async throws {}
@@ -546,6 +616,6 @@ private final class ApplyChargeLimitServiceMock: WallboxServiceProtocol {
         )
     }
 
-    func startCharging(cardIndex: Int) async throws {}
+    func startCharging(cardIndex: Int, chargeLimitWh: Int) async throws {}
     func stopCharging() async throws {}
 }

@@ -137,6 +137,8 @@ Base URL, endpoints, and status fields: see [`CONTEXT.md`](CONTEXT.md) for the f
 - Charge-limit field `dwo` is always sent in **Wh**, computed via `ChargingSettings.computedChargeLimitWh` (see CONTEXT.md for the formula) — never send raw kWh.
 - Always refresh status after a successful SET call.
 - Polling interval: 15–20 seconds (from `AppSettings.pollingIntervalSeconds`).
+- **Never start charging with `frc=2`.** Force on sits above the wallbox's own logic and bypasses the `dwo` energy-limit check (`modelStatus` 3 instead of 15). Start ends with `frc=0` (neutral); stop uses `frc=1`.
+- A start always sends the current `dwo` first — the debounced SOC sync alone is not enough, since it skips unchanged values.
 
 ### Car connection states (`car` field)
 
@@ -175,6 +177,7 @@ Official go-e enum: `Unknown/Error=0, Idle=1, Charging=2, WaitCar=3, Complete=4,
 - **Feature 1**: Live wallbox status display — `GET /api/status`, `car` state mapping, power and session energy display, polling loop (every 15 s while the Dashboard is active).
 - **Feature 2**: Charge-limit control — current SOC and target SOC set via draggable dots on the Dashboard progress bar (or tap-to-type) → `dwo` calculation → `GET /api/set?dwo=...`, debounced wallbox sync on input change, status refresh after each SET.
 - **Feature 3 (persistence part)**: Settings persistence via iCloud KV Store + UserDefaults in `AppSettings` (fallback chain iCloud → UserDefaults → default, written to both in `didSet`).
+- **Start/stop charging**: `dwo` → `trx` → `frc=0` on start (so the wallbox honours the charge limit), `frc=1` on stop, RFID user selected on the Dashboard, burst polling for 15 s after each action.
 
 ### In Progress
 - Feature 3 (remaining part): settings validation hardening.

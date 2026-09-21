@@ -54,6 +54,28 @@ struct WallboxAPIClientTests {
     }
 
     @Test
+    func fetchStatusWithUnrepresentablePowerYieldsZeroInsteadOfTrapping() async throws {
+        // A garbled response must not crash the conversion to `Int` (#41).
+        let client = makeClient(
+            json: #"{"car": 2, "nrg": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1e300]}"#
+        )
+
+        let status = try await client.fetchStatus()
+
+        #expect(status.chargingPowerW == 0)
+    }
+
+    @Test
+    func fetchStatusWithUnrepresentableEnergyFieldFallsBackToZero() async throws {
+        let client = makeClient(json: #"{"car": 2, "wh": 1e300, "dwo": 1e300}"#)
+
+        let status = try await client.fetchStatus()
+
+        #expect(status.energyPerDayWh == 0)
+        #expect(status.chargeLimitWh == 0)
+    }
+
+    @Test
     func fetchStatusWithShortOrMissingNRGArrayYieldsZeroPower() async throws {
         let shortArrayClient = makeClient(json: #"{"car": 2, "nrg": [1, 2, 3]}"#)
         #expect(try await shortArrayClient.fetchStatus().chargingPowerW == 0)

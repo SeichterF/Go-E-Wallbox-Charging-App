@@ -85,7 +85,9 @@ final class DashboardViewModel {
         let chargedKWh = Double(status.energyPerDayWh) / 1000.0
         let storedKWh = chargedKWh * settings.chargingEnergyFactor
         let socGain = storedKWh / settings.batterySizeKWh * 100.0
-        return min(100, parsedCurrentSOCPercent + Int(socGain.rounded()))
+        // Clamping the gain first keeps both the conversion and the addition below from overflowing.
+        let gainPercent = socGain.safeRoundedInt(clampedTo: 0...100)
+        return min(100, parsedCurrentSOCPercent + gainPercent)
     }
 
     /// Active poll interval: fast burst interval while a start/stop transition settles, otherwise the configured interval.
@@ -347,9 +349,10 @@ final class DashboardViewModel {
               settings.batterySizeKWh > 0,
               settings.chargingEnergyFactor > 0 else { return }
 
-        let implied = settings.targetSOCPercent
-            - Int((Double(limitWh) * 100.0
-                / (settings.batterySizeKWh * 1000.0 * settings.chargingEnergyFactor)).rounded())
+        let impliedGain = (Double(limitWh) * 100.0
+            / (settings.batterySizeKWh * 1000.0 * settings.chargingEnergyFactor))
+            .safeRoundedInt(clampedTo: 0...100)
+        let implied = settings.targetSOCPercent - impliedGain
         let clamped = max(0, min(100, implied))
         currentSOCText = String(clamped)
         lastSyncedSOC = clamped

@@ -68,6 +68,7 @@ enum AppConstants {
 
         // Dashboard – charging control
         static let dashboardStartCharging = String(localized: "dashboard_start_charging")
+        static let startChargingTargetReachedError = String(localized: "start_charging_target_reached_error")
         static let dashboardStopCharging = String(localized: "dashboard_stop_charging")
         static let dashboardRFIDUserLabel = String(localized: "dashboard_rfid_user_label")
         static let dashboardNoUserOption = String(localized: "dashboard_no_user_option")

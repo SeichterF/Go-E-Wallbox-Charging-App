@@ -19,13 +19,22 @@ struct WallboxService: WallboxServiceProtocol {
         try await apiClient.setChargeEnergyLimitWh(dwoWh)
     }
 
-    /// Starts charging by setting the active transaction to `cardIndex` (0-based) and forcing on.
+    /// Starts charging by applying the energy limit, setting the active transaction to `cardIndex`
+    /// (0-based) and releasing the force state to neutral.
+    ///
+    /// Neutral (`frc=0`) rather than force on (`frc=2`) is deliberate: force on sits above the
+    /// energy-limit check in the wallbox's decision logic, so a forced session reports
+    /// `modelStatus` 3 (ChargingBecauseForceStateOn) and never evaluates `dwo`. Neutral lets the
+    /// default logic run (`modelStatus` 15) — the state the official go-e app's Basic mode
+    /// produces — which is where the limit is honoured.
+    ///
     /// Pass `cardIndex = -1` to start without assigning a user.
-    func startCharging(cardIndex: Int) async throws {
+    func startCharging(cardIndex: Int, chargeLimitWh: Int) async throws {
+        try await apiClient.setChargeEnergyLimitWh(chargeLimitWh)
         if cardIndex >= 0 {
             try await apiClient.setTransaction(cardIndex + 1)
         }
-        try await apiClient.setForceState(2)
+        try await apiClient.setForceState(0)
     }
 
     func stopCharging() async throws {

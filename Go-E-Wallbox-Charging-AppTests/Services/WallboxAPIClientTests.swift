@@ -189,6 +189,58 @@ struct WallboxAPIClientTests {
         #expect(requestedURL.absoluteString == "http://192.168.178.69/api/set?dwo=15351")
     }
 
+    @Test
+    func serviceStartChargingSendsLimitThenTransactionThenNeutralForceState() async throws {
+        let settings = AppSettings()
+        URLProtocolStub.setStub(statusCode: 200, body: Data("{}".utf8))
+        let service = WallboxService(
+            apiClient: WallboxAPIClient(settings: settings, session: URLProtocolStub.makeSession()),
+            settings: settings
+        )
+
+        try await service.startCharging(cardIndex: 0, chargeLimitWh: 15351)
+
+        // Order matters: the limit has to be in place before the wallbox is released, and the
+        // force state must end up neutral (0) — force on (2) bypasses the limit check entirely.
+        #expect(URLProtocolStub.recordedURLs.map(\.absoluteString) == [
+            "http://192.168.178.69/api/set?dwo=15351",
+            "http://192.168.178.69/api/set?trx=1",
+            "http://192.168.178.69/api/set?frc=0"
+        ])
+    }
+
+    @Test
+    func serviceStartChargingWithoutUserSkipsTransaction() async throws {
+        let settings = AppSettings()
+        URLProtocolStub.setStub(statusCode: 200, body: Data("{}".utf8))
+        let service = WallboxService(
+            apiClient: WallboxAPIClient(settings: settings, session: URLProtocolStub.makeSession()),
+            settings: settings
+        )
+
+        try await service.startCharging(cardIndex: -1, chargeLimitWh: 15351)
+
+        #expect(URLProtocolStub.recordedURLs.map(\.absoluteString) == [
+            "http://192.168.178.69/api/set?dwo=15351",
+            "http://192.168.178.69/api/set?frc=0"
+        ])
+    }
+
+    @Test
+    func serviceStopChargingSendsForceStateOff() async throws {
+        let settings = AppSettings()
+        URLProtocolStub.setStub(statusCode: 200, body: Data("{}".utf8))
+        let service = WallboxService(
+            apiClient: WallboxAPIClient(settings: settings, session: URLProtocolStub.makeSession()),
+            settings: settings
+        )
+
+        try await service.stopCharging()
+
+        let requestedURL = try #require(URLProtocolStub.recordedURLs.last)
+        #expect(requestedURL.absoluteString == "http://192.168.178.69/api/set?frc=1")
+    }
+
     // MARK: - Helpers
 
     private func makeClient(json: String, statusCode: Int = 200) -> WallboxAPIClient {

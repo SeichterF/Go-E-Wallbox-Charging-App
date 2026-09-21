@@ -38,6 +38,11 @@ http://<wallbox-ip>/api/
 | `alw` | bool | Allow charging (true/false) |
 | `eto` | int | Total energy charged ever (Wh) |
 | `err` | int | Error state (0 = no error) |
+| `lmo` | int | Logic mode: 3 = Default (shown as "Basic" in the go-e app), 4 = Awattar/Eco, 5 = NextTrip |
+| `frc` | int | Force state: 0 = neutral (follow the logic), 1 = force off, 2 = force on |
+| `trx` | int | Active transaction: `null` = none, 0 = without card, otherwise cardIndex + 1 |
+| `ate` | int | NextTrip energy in Wh — only used when `lmo = 5`, **not** the same as `dwo` |
+| `modelStatus` | int | Why the wallbox is (not) charging right now. Relevant values: 3 = ChargingBecauseForceStateOn, 6 = NotChargingBecauseEnergyLimit, 15 = ChargingBecauseFallbackDefault |
 
 ### Setting the Charge Limit
 ```
@@ -46,6 +51,32 @@ GET /api/set?dwo=<value_in_Wh>
 Example: to charge 20 kWh → `dwo=20000`
 
 To disable limit: `dwo=0`
+
+### Starting and Stopping a Charge
+
+`frc` does **not** select a mode — it is an override that sits *above* the wallbox's own logic,
+and the energy-limit check lives inside that logic. Measured on the device:
+
+| Force state | `modelStatus` | Is `dwo` evaluated? |
+|---|---|---|
+| `frc=2` (force on) | 3 — `ChargingBecauseForceStateOn` | **No** — the limit is bypassed |
+| `frc=0` (neutral) | 15 — `ChargingBecauseFallbackDefault` | Yes |
+
+So a start must end with `frc=0`, not `frc=2`. The Basic-mode switch in the official go-e app
+does exactly this, which is why toggling it there made the limit work again.
+
+**Start sequence** (`WallboxService.startCharging(cardIndex:chargeLimitWh:)`):
+
+```
+GET /api/set?dwo=<Wh>          # limit first, so it is in place before charging is released
+GET /api/set?trx=<cardIndex+1> # only when a user is selected (cardIndex >= 0)
+GET /api/set?frc=0             # neutral — hand control back to the default logic
+```
+
+**Stop**: `GET /api/set?frc=1` (force off).
+
+Note that `dwo=0` means *no limit*, so a start is refused when the target SOC is already
+reached rather than charging without a bound.
 
 ---
 

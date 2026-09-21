@@ -28,7 +28,7 @@ struct WallboxAPIClient {
         let carStatusValue = intValue(from: jsonObject["car"]) ?? 0
         let connectionState = mapConnectionState(from: carStatusValue)
         let powerWFromNRG = powerFromEnergyArray(jsonObject["nrg"])
-        let chargingPowerW = Int(powerWFromNRG.rounded())
+        let chargingPowerW = powerWFromNRG.safeRoundedInt ?? 0
         let sessionEnergyWh = intValue(from: jsonObject["wh"]) ?? 0
         let chargeLimitWh = intValue(from: jsonObject["dwo"]) ?? 0
         let forceState = intValue(from: jsonObject["frc"]) ?? 0
@@ -126,7 +126,8 @@ struct WallboxAPIClient {
             return Int(stringValue)
         }
         if let doubleValue = rawValue as? Double {
-            return Int(doubleValue.rounded())
+            // A malformed response must not trap on NaN/infinity — treat it as "missing".
+            return doubleValue.safeRoundedInt
         }
 
         return nil

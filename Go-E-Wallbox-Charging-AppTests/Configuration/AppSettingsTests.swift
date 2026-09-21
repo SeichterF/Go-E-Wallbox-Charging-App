@@ -116,4 +116,68 @@ struct AppSettingsTests {
         #expect(defaults.string(forKey: "chargerIP") == "10.0.0.42")
         #expect(cloudStore.object(forKey: "chargerIP") as? String == "10.0.0.42")
     }
+
+    // MARK: - Value sanitization (issue #41)
+
+    @Test
+    func outOfRangeStoredBatterySizeIsRepairedOnRead() throws {
+        // Regression for #41: a poisoned value crashed the Dashboard on every launch,
+        // and iCloud handed it back even after a reinstall.
+        let defaults = try makeCleanDefaults(suiteName: "AppSettingsTests.poisonedBattery")
+        let cloudStore = MockCloudStore(storage: ["batterySizeKWh": 1e30])
+
+        let settings = AppSettings(defaults: defaults, cloudStore: cloudStore)
+
+        #expect(settings.batterySizeKWh == 250.0)
+        // The repaired value replaces the poisoned one, so no other device syncs it back.
+        #expect(cloudStore.object(forKey: "batterySizeKWh") as? Double == 250.0)
+        #expect(defaults.object(forKey: "batterySizeKWh") as? Double == 250.0)
+    }
+
+    @Test
+    func notANumberStoredBatterySizeFallsBackToDefaultOnRead() throws {
+        let defaults = try makeCleanDefaults(suiteName: "AppSettingsTests.nanBattery")
+        let cloudStore = MockCloudStore(storage: ["batterySizeKWh": Double.nan])
+
+        let settings = AppSettings(defaults: defaults, cloudStore: cloudStore)
+
+        #expect(settings.batterySizeKWh == 42.0)
+    }
+
+    @Test
+    func outOfRangeStoredChargingFactorIsRepairedOnRead() throws {
+        let defaults = try makeCleanDefaults(suiteName: "AppSettingsTests.poisonedFactor")
+        let cloudStore = MockCloudStore(storage: ["chargingEnergyFactor": 0.0001])
+
+        let settings = AppSettings(defaults: defaults, cloudStore: cloudStore)
+
+        #expect(settings.chargingEnergyFactor == 0.5)
+    }
+
+    @Test
+    func outOfRangeWrittenValuesAreClampedAndPersistedClamped() throws {
+        let defaults = try makeCleanDefaults(suiteName: "AppSettingsTests.clampOnWrite")
+        let cloudStore = MockCloudStore()
+
+        let settings = AppSettings(defaults: defaults, cloudStore: cloudStore)
+        settings.batterySizeKWh = 1_000.0
+        settings.chargingEnergyFactor = 2.0
+
+        #expect(settings.batterySizeKWh == 250.0)
+        #expect(settings.chargingEnergyFactor == 1.0)
+        #expect(defaults.object(forKey: "batterySizeKWh") as? Double == 250.0)
+        #expect(cloudStore.object(forKey: "chargingEnergyFactor") as? Double == 1.0)
+    }
+
+    @Test
+    func valuesInsideTheAllowedRangeAreUntouched() throws {
+        let defaults = try makeCleanDefaults(suiteName: "AppSettingsTests.inRange")
+
+        let settings = AppSettings(defaults: defaults, cloudStore: MockCloudStore())
+        settings.batterySizeKWh = 77.5
+        settings.chargingEnergyFactor = 0.92
+
+        #expect(settings.batterySizeKWh == 77.5)
+        #expect(settings.chargingEnergyFactor == 0.92)
+    }
 }

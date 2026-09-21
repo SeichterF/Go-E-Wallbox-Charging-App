@@ -272,7 +272,7 @@ struct DashboardViewModelTests {
 
     @MainActor
     @Test
-    func calculatedCurrentSOCPercentClampsToHundredAndHandlesZeroBattery() async {
+    func calculatedCurrentSOCPercentClampsToHundred() async {
         let appSettings = AppSettings()
         appSettings.batterySizeKWh = 42
         appSettings.chargingEnergyFactor = 0.85
@@ -297,8 +297,42 @@ struct DashboardViewModelTests {
         await viewModel.refreshStatus()
         #expect(viewModel.calculatedCurrentSOCPercent == 100)
 
+        // A zero battery size is no longer reachable — `AppSettings` clamps it to the minimum,
+        // which keeps the division below from producing an unrepresentable SOC gain (#41).
         appSettings.batterySizeKWh = 0
-        #expect(viewModel.calculatedCurrentSOCPercent == 37)
+        #expect(appSettings.batterySizeKWh == 1.0)
+        #expect((0...100).contains(viewModel.calculatedCurrentSOCPercent))
+    }
+
+    @MainActor
+    @Test
+    func calculatedCurrentSOCPercentStaysInRangeForExtremeSessionEnergy() async {
+        // `energyPerDayWh` comes straight from the wallbox; a garbled response must not
+        // overflow the SOC gain conversion or the addition that follows it.
+        let appSettings = AppSettings()
+        appSettings.batterySizeKWh = 42
+        appSettings.chargingEnergyFactor = 0.85
+
+        let service = DashboardServiceMock(
+            result: .success(
+                WallboxStatus(
+                    isConnected: true,
+                    connectionState: .charging,
+                    chargingPowerW: 11000,
+                    energyPerDayWh: Int.max,
+                    chargeLimitWh: 0,
+                    forceState: 0,
+                    activeTransaction: -1,
+                    availableCards: []
+                )
+            )
+        )
+        let viewModel = DashboardViewModel(service: service, settings: appSettings)
+        viewModel.currentSOCText = "37"
+
+        await viewModel.refreshStatus()
+
+        #expect(viewModel.calculatedCurrentSOCPercent == 100)
     }
 
     @MainActor

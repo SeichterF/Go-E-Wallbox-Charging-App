@@ -76,4 +76,32 @@ struct WallboxServiceTests {
         // 25200 Wh × 0.851 = 21445.2 → 21445
         #expect(chargingSettings.computedChargeLimitWh == 21445)
     }
+
+    // MARK: - Overflow safety (issue #41)
+
+    @Test(arguments: [Double.greatestFiniteMagnitude, .infinity, .nan, 1e30])
+    func chargingSettingsReturnsZeroInsteadOfTrappingOnUnrepresentableBatterySize(
+        batterySizeKWh: Double
+    ) {
+        let chargingSettings = ChargingSettings(
+            currentSOCPercent: 20,
+            targetSOCPercent: 80,
+            batterySizeKWh: batterySizeKWh,
+            chargingEnergyFactor: 0.85
+        )
+
+        #expect(chargingSettings.computedChargeLimitWh == 0)
+    }
+
+    @Test
+    func chargingSettingsReturnsZeroInsteadOfTrappingOnUnrepresentableEnergyFactor() {
+        let chargingSettings = ChargingSettings(
+            currentSOCPercent: 20,
+            targetSOCPercent: 80,
+            batterySizeKWh: 42,
+            chargingEnergyFactor: .greatestFiniteMagnitude
+        )
+
+        #expect(chargingSettings.computedChargeLimitWh == 0)
+    }
 }

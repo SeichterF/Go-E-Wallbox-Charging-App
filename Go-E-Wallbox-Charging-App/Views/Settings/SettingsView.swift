@@ -29,13 +29,22 @@ struct SettingsView: View {
                 ) {
                     LabeledContent(AppConstants.UI.batterySizeKWh) {
                         HStack {
-                            TextField("42", value: $viewModel.batterySizeKWh, format: .number)
-                                .keyboardType(.decimalPad)
-                                .multilineTextAlignment(.trailing)
-                                .focused($focusedField, equals: .batterySize)
+                            TextField("42", text: Binding(
+                                get: { viewModel.batterySizeText },
+                                set: { viewModel.replaceBatterySizeTextWithSanitizedUserInput($0) }
+                            ))
+                            .keyboardType(.decimalPad)
+                            .multilineTextAlignment(.trailing)
+                            .focused($focusedField, equals: .batterySize)
                             Text(AppConstants.UI.unitKWh)
                                 .foregroundStyle(.secondary)
                         }
+                    }
+
+                    if let error = viewModel.batterySizeValidationError {
+                        Text(error)
+                            .font(.caption)
+                            .foregroundStyle(.red)
                     }
                 }
 
@@ -44,15 +53,34 @@ struct SettingsView: View {
                     footer: Text(AppConstants.UI.chargingEnergyFactorFooter)
                 ) {
                     LabeledContent(AppConstants.UI.chargingEnergyFactor) {
-                        TextField("0.85", value: $viewModel.chargingEnergyFactor, format: .number)
-                            .keyboardType(.decimalPad)
-                            .multilineTextAlignment(.trailing)
-                            .focused($focusedField, equals: .chargingFactor)
+                        TextField("0.85", text: Binding(
+                            get: { viewModel.chargingEnergyFactorText },
+                            set: { viewModel.replaceChargingEnergyFactorTextWithSanitizedUserInput($0) }
+                        ))
+                        .keyboardType(.decimalPad)
+                        .multilineTextAlignment(.trailing)
+                        .focused($focusedField, equals: .chargingFactor)
+                    }
+
+                    if let error = viewModel.chargingEnergyFactorValidationError {
+                        Text(error)
+                            .font(.caption)
+                            .foregroundStyle(.red)
                     }
                 }
 
             }
             .scrollDismissesKeyboard(.interactively)
+            .onChange(of: focusedField) { previousField, _ in
+                switch previousField {
+                case .batterySize:
+                    viewModel.endEditingBatterySize()
+                case .chargingFactor:
+                    viewModel.endEditingChargingEnergyFactor()
+                case .ip, .none:
+                    break
+                }
+            }
             .navigationTitle(AppConstants.UI.settingsTitle)
             .toolbar {
                 ToolbarItemGroup(placement: .keyboard) {

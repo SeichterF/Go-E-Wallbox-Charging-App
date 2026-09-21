@@ -16,6 +16,8 @@ struct ChargingSettings: Equatable {
         let neededBatteryKWh = Double(deltaSOC) / 100.0 * batterySizeKWh
         let neededBatteryWh = neededBatteryKWh * 1000.0
         let wallboxWh = neededBatteryWh * chargingEnergyFactor
-        return Int(wallboxWh.rounded())
+        // `batterySizeKWh` is clamped by `AppSettings`, but a value from any other source
+        // must not be able to overflow `Int` here — that trap crashed the Dashboard (#41).
+        return wallboxWh.safeRoundedInt ?? 0
     }
 }

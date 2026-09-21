@@ -66,6 +66,10 @@ enum AppConstants {
         static let socValidationErrorMax = String(localized: "soc_validation_error_max")
         static let targetSOCValidationErrorRange = String(localized: "target_soc_validation_error_range")
 
+        // Settings input validation
+        static let batterySizeValidationErrorRange = String(localized: "battery_size_validation_error_range")
+        static let chargingFactorValidationErrorRange = String(localized: "charging_factor_validation_error_range")
+
         // Dashboard – charging control
         static let dashboardStartCharging = String(localized: "dashboard_start_charging")
         static let startChargingTargetReachedError = String(localized: "start_charging_target_reached_error")

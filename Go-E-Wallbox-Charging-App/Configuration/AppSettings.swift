@@ -40,30 +40,38 @@ final class AppSettings {
     var chargerIP: String {
         didSet { persist(chargerIP, forKey: StorageKeys.chargerIP) }
     }
+    private var batterySizeKWhStorage: Double
     /// Always kept inside `batterySizeRange`; an out-of-range value would overflow
-    /// `ChargingSettings.computedChargeLimitWh`. Assigning inside `didSet` does not re-enter it.
+    /// `ChargingSettings.computedChargeLimitWh`.
+    ///
+    /// Deliberately a computed property over private storage instead of a self-assigning
+    /// `didSet`: under `@Observable` such an assignment goes back through the generated
+    /// setter, re-enters `didSet` and overflows the stack.
     var batterySizeKWh: Double {
-        didSet {
-            batterySizeKWh = Self.sanitize(
-                batterySizeKWh,
+        get { batterySizeKWhStorage }
+        set {
+            batterySizeKWhStorage = Self.sanitize(
+                newValue,
                 into: Limits.batterySizeKWh,
                 fallback: DefaultValues.batterySizeKWh
             )
-            persist(batterySizeKWh, forKey: StorageKeys.batterySizeKWh)
+            persist(batterySizeKWhStorage, forKey: StorageKeys.batterySizeKWh)
         }
     }
     var targetSOCPercent: Int {
         didSet { persist(targetSOCPercent, forKey: StorageKeys.targetSOCPercent) }
     }
+    private var chargingEnergyFactorStorage: Double
     /// Always kept inside `chargingEnergyFactorRange`; see `batterySizeKWh` for why.
     var chargingEnergyFactor: Double {
-        didSet {
-            chargingEnergyFactor = Self.sanitize(
-                chargingEnergyFactor,
+        get { chargingEnergyFactorStorage }
+        set {
+            chargingEnergyFactorStorage = Self.sanitize(
+                newValue,
                 into: Limits.chargingEnergyFactor,
                 fallback: DefaultValues.chargingEnergyFactor
             )
-            persist(chargingEnergyFactor, forKey: StorageKeys.chargingEnergyFactor)
+            persist(chargingEnergyFactorStorage, forKey: StorageKeys.chargingEnergyFactor)
         }
     }
     var pollingIntervalSeconds: TimeInterval {
@@ -101,7 +109,7 @@ final class AppSettings {
         let storedBatterySizeKWh = (cloudStore.object(forKey: StorageKeys.batterySizeKWh) as? Double)
             ?? (defaults.object(forKey: StorageKeys.batterySizeKWh) as? Double)
             ?? DefaultValues.batterySizeKWh
-        self.batterySizeKWh = Self.sanitize(
+        self.batterySizeKWhStorage = Self.sanitize(
             storedBatterySizeKWh,
             into: Limits.batterySizeKWh,
             fallback: DefaultValues.batterySizeKWh
@@ -112,7 +120,7 @@ final class AppSettings {
         let storedChargingEnergyFactor = (cloudStore.object(forKey: StorageKeys.chargingEnergyFactor) as? Double)
             ?? (defaults.object(forKey: StorageKeys.chargingEnergyFactor) as? Double)
             ?? DefaultValues.chargingEnergyFactor
-        self.chargingEnergyFactor = Self.sanitize(
+        self.chargingEnergyFactorStorage = Self.sanitize(
             storedChargingEnergyFactor,
             into: Limits.chargingEnergyFactor,
             fallback: DefaultValues.chargingEnergyFactor

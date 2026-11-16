@@ -52,12 +52,14 @@ Go-E-Wallbox-Charging-App/
 ├── ViewModels/
 │   ├── DashboardViewModel.swift             # Status polling, isLoading/errorMessage state
 │   └── SettingsViewModel.swift              # Settings form state, delegates save to AppSettings
-└── Views/
-    ├── MainTabView.swift                    # Tab container (Dashboard + Settings)
-    ├── Dashboard/
-    │   └── DashboardView.swift
-    └── Settings/
-        └── SettingsView.swift
+├── Views/
+│   ├── MainTabView.swift                    # Tab container (Dashboard + Settings)
+│   ├── Dashboard/
+│   │   └── DashboardView.swift
+│   └── Settings/
+│       └── SettingsView.swift
+scripts/
+└── bump-version.sh                          # Version bump (minor|patch) for MARKETING_VERSION
 ```
 
 ---
@@ -184,6 +186,19 @@ Official go-e enum: `Unknown/Error=0, Idle=1, Charging=2, WaitCar=3, Complete=4,
 
 ---
 
+## Versioning
+
+Scheme `x.y.z`, stored as `MARKETING_VERSION` (6 entries) in `Go-E-Wallbox-Charging-App.xcodeproj/project.pbxproj`.
+
+- **Every PR contains exactly one version bump**, committed on the PR branch before the PR is opened.
+- **y (`minor`, z resets to 0)**: only for a non-backward-compatible change to persisted settings/data (keys or format in `AppSettings`, iCloud KV Store, UserDefaults — previously saved user data would no longer be readable).
+- **z (`patch`)**: everything else — features, fixes, UI changes, refactors, tooling.
+- **x** never changes unless the user explicitly says so.
+- `CURRENT_PROJECT_VERSION` (build number) is not touched.
+- Run `scripts/bump-version.sh <minor|patch>`; it aborts if the 6 entries differ. Do not edit `MARKETING_VERSION` by hand.
+
+---
+
 ## Git Workflow
 
 - **Never commit directly to `main`** — all work on dedicated branches.
@@ -193,6 +208,7 @@ Official go-e enum: `Unknown/Error=0, Idle=1, Charging=2, WaitCar=3, Complete=4,
 - New branches start from an up-to-date `main`.
 - Commit after each working feature, not after every file change.
 - If the agent breaks something, revert to the last commit — do not try to fix forward.
+- Before opening a PR: bump the version (see **Versioning**).
 - Pull requests: **non-draft** by default. Use draft only if explicitly asked.
 - GitHub access via the **GitHub MCP server** (`mcp__github__*`) — not `gh` CLI.
 
